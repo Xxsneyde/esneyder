@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════
+   Design tokens — color, type, radius, elevation and motion.
+   Light is the default; [data-theme="dark"] overrides colors.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Typography */
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+
+  /* Radius */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+
+  /* Layout */
+  --side: 276px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in: cubic-bezier(.55, 0, 1, .45);
+  --dur-1: .12s;
+  --dur-2: .2s;
+  --dur-3: .32s;
+
+  /* Light palette */
+  --bg: #F6F6F4;
+  --sidebar: #FBFBFA;
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF9;
+  --sunken: #F1F1EF;
+  --hover: rgba(20, 20, 26, .045);
+  --active: rgba(20, 20, 26, .075);
+
+  --line: #E9E9E6;
+  --line-2: #DDDDD9;
+  --line-strong: #C8C8C3;
+
+  --ink: #1C1C1E;
+  --ink-2: #57575D;
+  --ink-3: #8C8C92;
+
+  --accent: #2F5BEA;
+  --accent-hover: #2349CF;
+  --accent-ink: #2347C4;
+  --accent-soft: rgba(47, 91, 234, .09);
+  --on-accent: #FFFFFF;
+
+  --success: #17864F;
+  --success-soft: rgba(23, 134, 79, .1);
+  --danger: #D53A2C;
+  --danger-hover: #BC2F22;
+  --danger-soft: rgba(213, 58, 44, .09);
+  --warn: #B4530B;
+  --mark: #F2B33D;
+
+  /* High-contrast block (results, ticket, toast) */
+  --contrast: #1C1C1E;
+  --contrast-ink: #F5F5F7;
+  --contrast-muted: #A1A1A8;
+  --toast-ok: #3DD68C;
+
+  --focus: 0 0 0 3px rgba(47, 91, 234, .22);
+
+  --shadow-xs: 0 1px 2px rgba(16, 16, 22, .04);
+  --shadow-sm: 0 1px 2px rgba(16, 16, 22, .04), 0 2px 6px rgba(16, 16, 22, .03);
+  --shadow-md: 0 2px 4px rgba(16, 16, 22, .04), 0 8px 20px rgba(16, 16, 22, .06);
+  --shadow-lg: 0 10px 24px -6px rgba(16, 16, 22, .12), 0 28px 64px -16px rgba(16, 16, 22, .22);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0E0E10;
+  --sidebar: #131316;
+  --surface: #18181B;
+  --surface-2: #1C1C20;
+  --sunken: #121215;
+  --hover: rgba(255, 255, 255, .05);
+  --active: rgba(255, 255, 255, .085);
+
+  --line: #26262B;
+  --line-2: #303036;
+  --line-strong: #44444C;
+
+  --ink: #F3F3F5;
+  --ink-2: #ABABB3;
+  --ink-3: #76767F;
+
+  --accent: #7391FF;
+  --accent-hover: #8CA4FF;
+  --accent-ink: #A3B6FF;
+  --accent-soft: rgba(115, 145, 255, .14);
+  --on-accent: #0B0F1F;
+
+  --success: #3CC587;
+  --success-soft: rgba(60, 197, 135, .12);
+  --danger: #FF6A5C;
+  --danger-hover: #FF8578;
+  --danger-soft: rgba(255, 106, 92, .12);
+  --warn: #FFA066;
+
+  --contrast: #F3F3F5;
+  --contrast-ink: #141416;
+  --contrast-muted: #63636B;
+  --toast-ok: #17864F;
+
+  --focus: 0 0 0 3px rgba(115, 145, 255, .3);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .18);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 10px 24px rgba(0, 0, 0, .3);
+  --shadow-lg: 0 12px 28px -6px rgba(0, 0, 0, .5), 0 32px 72px -16px rgba(0, 0, 0, .6);
+
+  color-scheme: dark;
+}

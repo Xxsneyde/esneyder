@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F6F4">
+<title>MYBT · Herramientas BodyTech</title>
+<script>
+  /* Apply the saved theme before first paint to avoid a flash. */
+  (function () {
+    var t;
+    try { t = localStorage.getItem('mybt-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/tools.css">
+<link rel="stylesheet" href="assets/css/templates.css">
+</head>
+<body class="preload">
+
+<!-- ═══════════ Icon sprite ═══════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" hidden>
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+  <symbol id="i-medical" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7M9 4l3 2 3-2M9 20l3-2 3 2"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+  <symbol id="i-cal-edit" viewBox="0 0 24 24"><path d="M21 11V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6M16 2v4M8 2v4M3 10h18"/><path d="M18.4 14.6a1.9 1.9 0 0 1 2.7 2.7L16.5 22H14v-2.5Z"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></symbol>
+  <symbol id="i-cal-check" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></symbol>
+  <symbol id="i-cal-range" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M7 14h4M13 18h4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a2 2 0 0 1 2 2v3h-4a2 2 0 0 0 0 4h4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/><path d="M8 9h8M8 13h5"/></symbol>
+  <symbol id="i-template" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="9" height="7" rx="1.5"/><rect x="16" y="14" width="5" height="7" rx="1.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-duplicate" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2M15 12v6M12 15h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/><path d="M12 7v6M9 10h6"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="m3 8 4-4 4 4M7 4v16M21 16l-4 4-4-4M17 20V4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+</svg>
+
+<!-- ═══════════ Topbar (mobile) ═══════════ -->
+<header class="topbar">
+  <button class="icon-btn" id="menuBtn" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">
+    <svg class="ico"><use href="#i-menu"/></svg>
+  </button>
+  <span class="topbar-title" id="topbarTitle"></span>
+  <button class="icon-btn" data-act="theme" aria-label="Cambiar tema">
+    <svg class="ico"><use data-theme-icon href="#i-moon"/></svg>
+  </button>
+</header>
+
+<!-- ═══════════ Sidebar ═══════════ -->
+<nav class="sidebar" id="sidebar" aria-label="Herramientas">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true"><svg class="ico"><use href="#i-logo"/></svg></div>
+    <div>
+      <div class="brand-name">MYBT</div>
+      <div class="brand-sub">Herramientas BodyTech</div>
+    </div>
+  </div>
+
+  <div class="side-search">
+    <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="search" id="navSearch" placeholder="Buscar herramienta" aria-label="Buscar herramienta" autocomplete="off">
+    <kbd>/</kbd>
+  </div>
+
+  <div class="nav" id="nav">
+    <div class="nav-group">
+      <div class="nav-label">Novedades</div>
+      <button class="nav-item" data-sec="incap"><svg class="ico"><use href="#i-medical"/></svg><span class="nav-text">Incapacidad</span></button>
+      <button class="nav-item" data-sec="congel"><svg class="ico"><use href="#i-snow"/></svg><span class="nav-text">Congelación</span></button>
+      <button class="nav-item" data-sec="congel_retro"><svg class="ico"><use href="#i-history"/></svg><span class="nav-text">Congelación retroactiva</span></button>
+      <button class="nav-item" data-sec="fechainicio"><svg class="ico"><use href="#i-cal-edit"/></svg><span class="nav-text">Cambio de fecha de inicio</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Cambio de plan</div>
+      <button class="nav-item" data-sec="calc_mes"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora mensual</span></button>
+      <button class="nav-item" data-sec="calc_tri"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora trimestral</span></button>
+      <button class="nav-item" data-sec="calc_anio"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora anual</span></button>
+      <button class="nav-item" data-sec="valores"><svg class="ico"><use href="#i-table"/></svg><span class="nav-text">Tabla de valores</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Fechas</div>
+      <button class="nav-item" data-sec="fecha_final"><svg class="ico"><use href="#i-cal-check"/></svg><span class="nav-text">Fecha final del plan</span></button>
+      <button class="nav-item" data-sec="dias"><svg class="ico"><use href="#i-cal-range"/></svg><span class="nav-text">Días entre fechas</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Otros cálculos</div>
+      <button class="nav-item" data-sec="calc_saldo"><svg class="ico"><use href="#i-wallet"/></svg><span class="nav-text">Saldo a favor</span></button>
+      <button class="nav-item" data-sec="calc_congel"><svg class="ico"><use href="#i-percent"/></svg><span class="nav-text">3.ª congelación</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Respuestas</div>
+      <button class="nav-item" data-sec="pqr"><svg class="ico"><use href="#i-message"/></svg><span class="nav-text">Respuestas PQR</span></button>
+      <button class="nav-item" data-sec="plantillas"><svg class="ico"><use href="#i-template"/></svg><span class="nav-text">Plantillas</span></button>
+    </div>
+    <p class="nav-empty" id="navEmpty">Ninguna herramienta coincide.</p>
+  </div>
+
+  <div class="side-foot">
+    <button class="side-btn" data-act="help" title="Atajos de teclado (?)"><svg class="ico"><use href="#i-keyboard"/></svg>Atajos</button>
+    <button class="side-btn" data-act="theme" title="Cambiar tema (Alt + T)"><svg class="ico"><use data-theme-icon href="#i-moon"/></svg><span data-theme-label>Oscuro</span></button>
+  </div>
+</nav>
+<div class="scrim" id="scrim" aria-hidden="true"></div>
+
+<!-- ═══════════ Main ═══════════ -->
+<main class="main">
+<div class="main-inner">
+
+  <!-- INCAPACIDAD -->
+  <section class="section" id="sec-incap">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Incapacidad médica</h1><p class="page-sub">Calcula automáticamente los días de la novedad y la nueva fecha.</p></div></header>
+
+    <div class="card" data-gen="c5">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c5_ini">Fecha inicio</label><input type="date" id="c5_ini"></div>
+          <div class="field"><label for="c5_fin">Fecha fin incapacidad</label><input type="date" id="c5_fin"></div>
+          <div class="field"><label for="c5_corte">Fecha fin servicio actual</label><input type="date" id="c5_corte"></div>
+          <div class="field"><label for="c5_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c5_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c5_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c6">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c6_ini">Fecha inicio</label><input type="date" id="c6_ini"></div>
+          <div class="field"><label for="c6_fin">Fecha fin incapacidad</label><input type="date" id="c6_fin"></div>
+          <div class="field"><label for="c6_corte">Fecha de corte actual</label><input type="date" id="c6_corte"></div>
+          <div class="field"><label for="c6_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c6_pqr" placeholder="3309372"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c6_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONGELACIÓN -->
+  <section class="section" id="sec-congel">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Congelación</h1><p class="page-sub">Novedad de congelación de plan, año o débito.</p></div></header>
+
+    <div class="card" data-gen="c7">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c7_ini">Fecha inicio</label><input type="date" id="c7_ini"></div>
+          <div class="field"><label for="c7_fin">Fecha fin congelación</label><input type="date" id="c7_fin"></div>
+          <div class="field"><label for="c7_corte">Fecha fin servicio actual</label><input type="date" id="c7_corte"></div>
+          <div class="field"><label for="c7_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c7_pqr" placeholder="3359023"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c7_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c8">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c8_ini">Fecha inicio</label><input type="date" id="c8_ini"></div>
+          <div class="field"><label for="c8_fin">Fecha fin congelación</label><input type="date" id="c8_fin"></div>
+          <div class="field"><label for="c8_corte">Fecha de corte actual</label><input type="date" id="c8_corte"></div>
+          <div class="field"><label for="c8_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c8_pqr" placeholder="3350239"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c8_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONGELACIÓN RETROACTIVA -->
+  <section class="section" id="sec-congel_retro">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Congelación retroactiva</h1><p class="page-sub">Novedades de congelación aplicadas con fecha anterior a la actual.</p></div></header>
+
+    <div class="card" data-gen="c9">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Retro · Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c9_ini">Fecha inicio</label><input type="date" id="c9_ini"></div>
+          <div class="field"><label for="c9_fin">Fecha fin congelación</label><input type="date" id="c9_fin"></div>
+          <div class="field"><label for="c9_corte">Fecha fin servicio actual</label><input type="date" id="c9_corte"></div>
+          <div class="field"><label for="c9_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c9_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c9_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c10">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Retro · Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c10_ini">Fecha inicio</label><input type="date" id="c10_ini"></div>
+          <div class="field"><label for="c10_fin">Fecha fin congelación</label><input type="date" id="c10_fin"></div>
+          <div class="field"><label for="c10_corte">Fecha de corte actual</label><input type="date" id="c10_corte"></div>
+          <div class="field"><label for="c10_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c10_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c10_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAMBIO DE FECHA DE INICIO -->
+  <section class="section" id="sec-fechainicio">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Cambio de fecha de inicio</h1><p class="page-sub">Corrección de la fecha de inicio del plan por error de digitación.</p></div></header>
+    <div class="card" data-gen="c11">
+      <div class="card-header"><span class="card-title">Nueva fecha de inicio</span><span class="badge">Fecha inicio</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="c11_actual">Fecha inicio actual (errónea)</label><input type="date" id="c11_actual"></div>
+          <div class="field"><label for="c11_nueva">Nueva fecha inicio</label><input type="date" id="c11_nueva"></div>
+          <div class="field"><label for="c11_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c11_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c11_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA MENSUAL -->
+  <section class="section" id="sec-calc_mes">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora mensual</h1><p class="page-sub">Valor a cobrar por cambio de plan Débito. Añade los periodos que necesites; el total se suma solo.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del débito ÷ <strong>30 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-mes"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-mes">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA TRIMESTRAL -->
+  <section class="section" id="sec-calc_tri">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora trimestral</h1><p class="page-sub">Igual que la mensual, pero el valor del trimestre se divide primero entre 3 para llevarlo a un mes.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Trimestre</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del trimestre ÷ <strong>3 meses</strong> ÷ <strong>30 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-tri"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-tri">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA ANUAL -->
+  <section class="section" id="sec-calc_anio">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora anual</h1><p class="page-sub">Valor a cobrar por cambio de plan Año, con el valor diario sobre 365 días.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del plan ÷ <strong>365 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-anio"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-anio">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLA DE VALORES -->
+  <section class="section" id="sec-valores">
+    <header class="page-head">
+      <div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Tabla de valores</h1><p class="page-sub">Precios de julio 2026 por plan y categoría. Desde cualquier calculadora usa «Elegir plan» o Alt + P y el valor se pone solo.</p></div>
+      <div class="page-actions"><button class="btn btn-secondary" data-act="reset"><svg class="ico"><use href="#i-reset"/></svg>Restablecer precios</button></div>
+    </header>
+    <div class="consult" aria-live="polite">
+      <div class="field"><label for="q-g">Tipo</label><select id="q-g"><option value="mes">Mensual · Débito</option><option value="tri">Trimestral</option><option value="anio">Anual</option></select></div>
+      <div class="field"><label for="q-y">Nombre del plan</label><select id="q-y"></select></div>
+      <div class="field"><label for="q-c">Categoría</label><select id="q-c"></select></div>
+      <div class="res"><small id="q-note">Valor del plan</small><b id="q-v">—</b></div>
+    </div>
+    <div class="cat-grid">
+      <div class="card" data-gpanel="mes"><div class="card-header"><span class="card-title">Mensual · Débito</span><span class="badge">÷ 30</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-mes"></div><button class="add-row" data-act="catadd" data-g="mes"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan mensual</button></div></div>
+      <div class="card" data-gpanel="tri"><div class="card-header"><span class="card-title">Trimestral</span><span class="badge">÷ 3 ÷ 30</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-tri"></div><button class="add-row" data-act="catadd" data-g="tri"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan trimestral</button></div></div>
+      <div class="card" data-gpanel="anio"><div class="card-header"><span class="card-title">Anual</span><span class="badge">÷ 365</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-anio"></div><button class="add-row" data-act="catadd" data-g="anio"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan anual</button></div></div>
+    </div>
+  </section>
+
+  <!-- FECHA FINAL DEL PLAN -->
+  <section class="section" id="sec-fecha_final">
+    <header class="page-head"><div><p class="page-eyebrow">Fechas</p><h1 class="page-title">Fecha final del plan</h1><p class="page-sub">Suma un año de 365 días a la fecha de inicio, luego los meses extra y por último los días extra.</p></div></header>
+    <div class="plan-layout">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Datos del plan</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button></div></div>
+        <div class="card-body">
+          <div class="fields-grid g2">
+            <div class="field span2"><label for="p-start">Fecha de inicio</label><input type="date" id="p-start" data-plan="start"><p class="hint"><strong>H</strong> pone hoy · <strong>+</strong> y <strong>−</strong> mueven un día</p></div>
+            <div class="field"><label for="p-years">Años de plan</label><div class="stepper"><button type="button" tabindex="-1" data-step="years" data-d="-1" aria-label="Restar año">−</button><input type="number" min="0" id="p-years" data-plan="years"><button type="button" tabindex="-1" data-step="years" data-d="1" aria-label="Sumar año">+</button></div><p class="hint">Cada año suma 365 días</p></div>
+            <div class="field"><label for="p-months">Meses extra</label><div class="stepper"><button type="button" tabindex="-1" data-step="months" data-d="-1" aria-label="Restar mes">−</button><input type="number" id="p-months" data-plan="months"><button type="button" tabindex="-1" data-step="months" data-d="1" aria-label="Sumar mes">+</button></div><p class="hint">Meses calendario</p></div>
+            <div class="field span2"><label for="p-days">Días extra</label><div class="stepper"><button type="button" tabindex="-1" data-step="days" data-d="-1" aria-label="Restar día">−</button><input type="number" id="p-days" data-plan="days"><button type="button" tabindex="-1" data-step="days" data-d="1" aria-label="Sumar día">+</button></div></div>
+          </div>
+          <div class="trail"><div class="trail-title">Cómo se llega a la fecha</div><ol id="trail"></ol></div>
+        </div>
+      </div>
+      <aside class="ticket" id="ticket" aria-live="polite">
+        <div class="ticket-head"><span>Fecha final</span><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+        <div class="ticket-body"><div class="tk-week" id="tk-week"></div><div class="tk-day" id="tk-day"></div><div class="tk-month" id="tk-month"></div></div>
+        <div class="ticket-perf"></div>
+        <dl class="ticket-foot"><div><dt>Fecha + año</dt><dd id="tk-year"></dd></div><div><dt>Duración total</dt><dd id="tk-total"></dd></div></dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- DÍAS ENTRE FECHAS -->
+  <section class="section" id="sec-dias">
+    <header class="page-head"><div><p class="page-eyebrow">Fechas</p><h1 class="page-title">Días entre fechas</h1><p class="page-sub">Cuenta los días de cada periodo incluyendo el día de inicio y el día final.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Periodos</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <div class="rows" id="rows-range"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total de días en todos los periodos</span><span class="calc-total-value" id="total-range">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALDO A FAVOR -->
+  <section class="section" id="sec-calc_saldo">
+    <header class="page-head"><div><p class="page-eyebrow">Otros cálculos</p><h1 class="page-title">Saldo a favor</h1><p class="page-sub">Plan Débito Mensual: calcula el saldo a favor y el valor a debitar.</p></div></header>
+    <div class="card" data-calc="saldo">
+      <div class="card-header"><span class="card-title">Plan Débito Mensual</span><span class="badge">Cálculo</span><div class="card-actions"><button class="btn btn-secondary btn-sm" data-act="copyhero"><svg class="ico"><use href="#i-copy"/></svg>Copiar valor</button><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="cs_valor">Valor total del plan ($)</label><input type="number" inputmode="numeric" id="cs_valor" placeholder="160000"><div class="field-below"><span class="plan-tag"></span><button type="button" class="pick" data-pick-for="cs_valor" data-group="mes" title="Elegir de la tabla de valores (Alt + P)">Elegir plan</button></div></div>
+          <div class="field"><label for="cs_dtotal">Total de días del período</label><input type="number" inputmode="numeric" id="cs_dtotal" placeholder="90"></div>
+          <div class="field"><label for="cs_dnov">Días de novedad</label><input type="number" inputmode="numeric" id="cs_dnov" placeholder="4"></div>
+        </div>
+        <div class="calc-result" id="cs_res" aria-live="polite">
+          <div class="calc-result-grid">
+            <div class="calc-stat"><div class="calc-stat-label">Valor del día</div><div class="calc-stat-value" id="cs_r1">—</div></div>
+            <div class="calc-stat"><div class="calc-stat-label">Saldo a favor</div><div class="calc-stat-value" id="cs_r2">—</div></div>
+            <div class="calc-stat hero"><div class="calc-stat-label">Valor a debitar</div><div class="calc-stat-value" id="cs_r3">—</div></div>
+          </div>
+        </div>
+        <p class="empty-note">Completa los tres campos para ver el resultado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.ª CONGELACIÓN -->
+  <section class="section" id="sec-calc_congel">
+    <header class="page-head"><div><p class="page-eyebrow">Otros cálculos</p><h1 class="page-title">3.ª congelación</h1><p class="page-sub">Plan Débito Mensual: calcula el valor a cobrar por la tercera congelación.</p></div></header>
+    <div class="card" data-calc="congel">
+      <div class="card-header"><span class="card-title">Plan Débito Mensual</span><span class="badge">Cálculo</span><div class="card-actions"><button class="btn btn-secondary btn-sm" data-act="copyhero"><svg class="ico"><use href="#i-copy"/></svg>Copiar valor</button><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="cc_valor">Valor total del plan ($)</label><input type="number" inputmode="numeric" id="cc_valor" placeholder="148000"><div class="field-below"><span class="plan-tag"></span><button type="button" class="pick" data-pick-for="cc_valor" data-group="mes" title="Elegir de la tabla de valores (Alt + P)">Elegir plan</button></div></div>
+          <div class="field"><label for="cc_mes">Días del mes</label><input type="number" inputmode="numeric" id="cc_mes" placeholder="30" value="30"></div>
+          <div class="field"><label for="cc_dias">Días de la novedad</label><input type="number" inputmode="numeric" id="cc_dias" placeholder="20"></div>
+        </div>
+        <div class="calc-result" id="cc_res" aria-live="polite">
+          <div class="calc-result-grid">
+            <div class="calc-stat"><div class="calc-stat-label">Valor del día</div><div class="calc-stat-value" id="cc_r1">—</div></div>
+            <div class="calc-stat"><div class="calc-stat-label">Valor novedad</div><div class="calc-stat-value" id="cc_r2">—</div></div>
+            <div class="calc-stat hero"><div class="calc-stat-label">A cobrar (25%)</div><div class="calc-stat-value" id="cc_r3">—</div></div>
+          </div>
+        </div>
+        <p class="empty-note">Completa el valor del plan y los días de la novedad para ver el resultado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESPUESTAS PQR -->
+  <section class="section" id="sec-pqr">
+    <header class="page-head"><div><p class="page-eyebrow">Respuestas</p><h1 class="page-title">Respuestas PQR</h1><p class="page-sub">Haz clic en el texto para editarlo antes de copiar. Los cambios no se guardan al recargar; usa <strong>Guardar en Plantillas</strong> para conservar una versión propia.</p></div></header>
+    <div class="list-toolbar">
+      <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="pqrSearch" placeholder="Buscar respuesta…" aria-label="Buscar respuesta" autocomplete="off" data-autofocus></label>
+      <span class="list-count" id="pqrCount"></span>
+    </div>
+    <div class="pqr-list" id="pqrList"></div>
+    <p class="no-results" id="pqrNone">Ninguna respuesta coincide con la búsqueda.</p>
+  </section>
+
+  <!-- PLANTILLAS -->
+  <section class="section" id="sec-plantillas">
+    <header class="page-head">
+      <div><p class="page-eyebrow">Respuestas</p><h1 class="page-title">Plantillas</h1><p class="page-sub">Crea, organiza y reutiliza tus propios textos. Se guardan en este navegador.</p></div>
+      <div class="page-actions">
+        <div class="menu-wrap">
+          <button class="icon-btn bordered" data-menu-toggle aria-controls="tplMenu" aria-expanded="false" aria-haspopup="menu" aria-label="Más opciones"><svg class="ico"><use href="#i-more"/></svg></button>
+          <div class="menu" id="tplMenu" role="menu">
+            <button class="menu-item" role="menuitem" data-tpl-menu="export"><svg class="ico"><use href="#i-download"/></svg>Exportar copia de seguridad</button>
+            <button class="menu-item" role="menuitem" data-tpl-menu="import"><svg class="ico"><use href="#i-upload"/></svg>Importar plantillas</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" data-tpl-new><svg class="ico"><use href="#i-plus"/></svg>Nueva plantilla <kbd>Alt N</kbd></button>
+      </div>
+    </header>
+
+    <div id="tplBrowse">
+      <div class="tpl-toolbar">
+        <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="tplSearch" placeholder="Buscar por nombre o contenido…" aria-label="Buscar plantillas" autocomplete="off" data-autofocus></label>
+        <label class="select-field"><svg class="ico" aria-hidden="true"><use href="#i-sort"/></svg>
+          <select id="tplSort" aria-label="Ordenar plantillas">
+            <option value="recent">Editadas recientemente</option>
+            <option value="name">Nombre (A–Z)</option>
+            <option value="uses">Más usadas</option>
+            <option value="oldest">Más antiguas</option>
+          </select>
+        </label>
+        <span class="tpl-count" id="tplCount" aria-live="polite"></span>
+      </div>
+      <div class="tpl-filters" id="tplFilters" role="group" aria-label="Filtrar plantillas"></div>
+      <div class="tpl-grid" id="tplGrid"></div>
+      <div class="empty-state" id="tplNoResults" hidden>
+        <div class="empty-icon"><svg class="ico"><use href="#i-search"/></svg></div>
+        <h3>Sin resultados</h3>
+        <p>Ninguna plantilla coincide con la búsqueda o el filtro seleccionado.</p>
+        <div class="empty-actions"><button class="btn btn-secondary" data-tpl-clear>Limpiar filtros</button></div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="tplEmpty" hidden>
+      <div class="empty-icon"><svg class="ico"><use href="#i-template"/></svg></div>
+      <h3>Aún no tienes plantillas</h3>
+      <p>Guarda los textos que usas a diario y cópialos con un clic. También puedes guardar cualquier respuesta PQR como plantilla.</p>
+      <div class="empty-actions">
+        <button class="btn btn-primary" data-tpl-new><svg class="ico"><use href="#i-plus"/></svg>Crear la primera</button>
+        <button class="btn btn-secondary" data-tpl-menu="import"><svg class="ico"><use href="#i-upload"/></svg>Importar</button>
+      </div>
+    </div>
+    <input type="file" id="tplImport" accept="application/json,.json" hidden>
+  </section>
+
+</div>
+</main>
+
+<!-- ═══════════ Overlays ═══════════ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="picker" aria-labelledby="pk-title">
+  <div class="dlg-head"><h2 id="pk-title">Elegir plan</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+  <div class="dlg-body">
+    <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input id="pk-q" type="search" placeholder="Buscar categoría" aria-label="Buscar categoría" autocomplete="off"></label>
+    <div class="segmented pk-groups" id="pk-groups" role="group" aria-label="Tipo de plan">
+      <button type="button" class="seg" data-g="mes">Mensual</button><button type="button" class="seg" data-g="tri">Trimestral</button><button type="button" class="seg" data-g="anio">Anual</button>
+    </div>
+    <div class="pk-names" id="pk-names" role="group" aria-label="Nombre del plan"></div>
+    <div class="pk-list" id="pk-list" role="listbox"></div>
+    <p class="pk-hint" id="pk-hint">↑ ↓ moverse · ← → cambiar plan · Enter elegir</p>
+  </div>
+</dialog>
+
+<dialog id="help" aria-labelledby="help-title">
+  <div class="dlg-head"><h2 id="help-title">Atajos de teclado</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+  <div class="dlg-body">
+    <h3>Moverse</h3>
+    <div class="sc"><span>Buscar herramienta (Enter abre la primera)</span><span class="keys"><kbd>/</kbd> · <kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+    <div class="sc"><span>Ir a las herramientas numeradas del menú</span><span class="keys"><kbd>Alt</kbd><kbd>1</kbd>–<kbd>9</kbd></span></div>
+    <div class="sc"><span>Herramienta anterior o siguiente</span><span class="keys"><kbd>Alt</kbd><kbd>↑</kbd><kbd>↓</kbd></span></div>
+    <div class="sc"><span>Siguiente campo / campo anterior</span><span class="keys"><kbd>Enter</kbd> · <kbd>Shift</kbd><kbd>Enter</kbd></span></div>
+    <h3>En cualquier campo de fecha</h3>
+    <div class="sc"><span>Poner la fecha de hoy</span><span class="keys"><kbd>H</kbd></span></div>
+    <div class="sc"><span>Sumar o restar un día</span><span class="keys"><kbd>+</kbd><kbd>−</kbd></span></div>
+    <div class="sc"><span>Sumar o restar un mes</span><span class="keys"><kbd>Shift</kbd><kbd>+</kbd><kbd>−</kbd></span></div>
+    <h3>Acciones</h3>
+    <div class="sc"><span>Copiar el texto o resultado de la tarjeta actual</span><span class="keys"><kbd>Alt</kbd><kbd>C</kbd></span></div>
+    <div class="sc"><span>Limpiar la tarjeta actual</span><span class="keys"><kbd>Alt</kbd><kbd>R</kbd></span></div>
+    <div class="sc"><span>Elegir plan de la tabla de valores</span><span class="keys"><kbd>Alt</kbd><kbd>P</kbd></span></div>
+    <div class="sc"><span>Añadir fila · Nueva plantilla</span><span class="keys"><kbd>Alt</kbd><kbd>N</kbd></span></div>
+    <div class="sc"><span>Eliminar la fila actual</span><span class="keys"><kbd>Alt</kbd><kbd>Supr</kbd></span></div>
+    <div class="sc"><span>Guardar plantilla en el editor</span><span class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></span></div>
+    <div class="sc"><span>Cambiar tema claro u oscuro</span><span class="keys"><kbd>Alt</kbd><kbd>T</kbd></span></div>
+    <div class="sc"><span>Mostrar esta ayuda</span><span class="keys"><kbd>?</kbd></span></div>
+  </div>
+</dialog>
+
+<dialog id="tplDialog" class="dlg-lg" aria-labelledby="tplDlgTitle">
+  <form id="tplForm" class="tpl-form" novalidate>
+    <div class="dlg-head"><h2 id="tplDlgTitle">Nueva plantilla</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="field">
+        <label for="tplName">Nombre</label>
+        <input id="tplName" maxlength="80" autocomplete="off" placeholder="Ej. Cierre por documentación incompleta" aria-describedby="tplNameErr">
+        <p class="field-error" id="tplNameErr"></p>
+      </div>
+      <div class="field">
+        <label for="tplCat">Categoría <span class="label-opt">Opcional</span></label>
+        <input id="tplCat" maxlength="40" autocomplete="off" list="tplCatList" placeholder="Ej. Cierre PQR">
+        <datalist id="tplCatList"></datalist>
+        <div class="cat-suggest" id="tplCatSuggest"></div>
+      </div>
+      <div class="field">
+        <label for="tplContent">Contenido</label>
+        <textarea id="tplContent" rows="8" placeholder="Escribe el texto de la plantilla…" aria-describedby="tplContentErr tplTip"></textarea>
+        <div class="field-foot"><p class="field-error" id="tplContentErr"></p><span class="char-count" id="tplChars">0 caracteres</span></div>
+        <p class="tpl-tip" id="tplTip">Consejo: marca los datos que cambian con corchetes, por ejemplo <code>[NOMBRE]</code> o <code>[DOC]</code>.</p>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <span class="dlg-hint"><kbd>Ctrl</kbd><kbd>Enter</kbd> para guardar</span>
+      <button type="button" class="btn btn-secondary" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="tplSave">Crear plantilla</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="confirmDlg" class="dlg-sm" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
+  <div class="confirm-body">
+    <div class="confirm-icon"><svg class="ico"><use href="#i-alert"/></svg></div>
+    <h2 id="confirmTitle"></h2>
+    <p id="confirmMsg"></p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn btn-secondary" id="confirmCancel" data-close>Cancelar</button>
+    <button type="button" class="btn btn-danger" id="confirmOk">Confirmar</button>
+  </div>
+</dialog>
+
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/generators.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/calculators.js"></script>
+<script src="assets/js/pqr.js"></script>
+<script src="assets/js/templates.js"></script>
+<script src="assets/js/actions.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

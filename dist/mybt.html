@@ -1,0 +1,3159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F6F4">
+<title>MYBT · Herramientas BodyTech</title>
+<script>
+  /* Apply the saved theme before first paint to avoid a flash. */
+  (function () {
+    var t;
+    try { t = localStorage.getItem('mybt-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   Design tokens — color, type, radius, elevation and motion.
+   Light is the default; [data-theme="dark"] overrides colors.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Typography */
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+
+  /* Radius */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+
+  /* Layout */
+  --side: 276px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in: cubic-bezier(.55, 0, 1, .45);
+  --dur-1: .12s;
+  --dur-2: .2s;
+  --dur-3: .32s;
+
+  /* Light palette */
+  --bg: #F6F6F4;
+  --sidebar: #FBFBFA;
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF9;
+  --sunken: #F1F1EF;
+  --hover: rgba(20, 20, 26, .045);
+  --active: rgba(20, 20, 26, .075);
+
+  --line: #E9E9E6;
+  --line-2: #DDDDD9;
+  --line-strong: #C8C8C3;
+
+  --ink: #1C1C1E;
+  --ink-2: #57575D;
+  --ink-3: #8C8C92;
+
+  --accent: #2F5BEA;
+  --accent-hover: #2349CF;
+  --accent-ink: #2347C4;
+  --accent-soft: rgba(47, 91, 234, .09);
+  --on-accent: #FFFFFF;
+
+  --success: #17864F;
+  --success-soft: rgba(23, 134, 79, .1);
+  --danger: #D53A2C;
+  --danger-hover: #BC2F22;
+  --danger-soft: rgba(213, 58, 44, .09);
+  --warn: #B4530B;
+  --mark: #F2B33D;
+
+  /* High-contrast block (results, ticket, toast) */
+  --contrast: #1C1C1E;
+  --contrast-ink: #F5F5F7;
+  --contrast-muted: #A1A1A8;
+  --toast-ok: #3DD68C;
+
+  --focus: 0 0 0 3px rgba(47, 91, 234, .22);
+
+  --shadow-xs: 0 1px 2px rgba(16, 16, 22, .04);
+  --shadow-sm: 0 1px 2px rgba(16, 16, 22, .04), 0 2px 6px rgba(16, 16, 22, .03);
+  --shadow-md: 0 2px 4px rgba(16, 16, 22, .04), 0 8px 20px rgba(16, 16, 22, .06);
+  --shadow-lg: 0 10px 24px -6px rgba(16, 16, 22, .12), 0 28px 64px -16px rgba(16, 16, 22, .22);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0E0E10;
+  --sidebar: #131316;
+  --surface: #18181B;
+  --surface-2: #1C1C20;
+  --sunken: #121215;
+  --hover: rgba(255, 255, 255, .05);
+  --active: rgba(255, 255, 255, .085);
+
+  --line: #26262B;
+  --line-2: #303036;
+  --line-strong: #44444C;
+
+  --ink: #F3F3F5;
+  --ink-2: #ABABB3;
+  --ink-3: #76767F;
+
+  --accent: #7391FF;
+  --accent-hover: #8CA4FF;
+  --accent-ink: #A3B6FF;
+  --accent-soft: rgba(115, 145, 255, .14);
+  --on-accent: #0B0F1F;
+
+  --success: #3CC587;
+  --success-soft: rgba(60, 197, 135, .12);
+  --danger: #FF6A5C;
+  --danger-hover: #FF8578;
+  --danger-soft: rgba(255, 106, 92, .12);
+  --warn: #FFA066;
+
+  --contrast: #F3F3F5;
+  --contrast-ink: #141416;
+  --contrast-muted: #63636B;
+  --toast-ok: #17864F;
+
+  --focus: 0 0 0 3px rgba(115, 145, 255, .3);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .18);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 10px 24px rgba(0, 0, 0, .3);
+  --shadow-lg: 0 12px 28px -6px rgba(0, 0, 0, .5), 0 32px 72px -16px rgba(0, 0, 0, .6);
+
+  color-scheme: dark;
+}
+</style>
+<style>
+/* ═══════════ Reset & base elements ═══════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11", "ss01";
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: not-allowed; }
+input, select, textarea { outline: none; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+[hidden] { display: none !important; }
+
+.ico {
+  width: 18px; height: 18px; flex-shrink: 0;
+  fill: none; stroke: currentColor; stroke-width: 1.75;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 0 5px;
+  font: 600 11px/18px var(--font);
+  text-align: center;
+  color: var(--ink-3);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--line-strong); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* No transitions while the app boots (prevents flashes) */
+.preload *, .preload *::before, .preload *::after { transition: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+<style>
+/* ═══════════ App shell: sidebar, topbar, main, page headers ═══════════ */
+body {
+  display: grid;
+  grid-template-columns: var(--side) minmax(0, 1fr);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky; top: 0;
+  height: 100vh; height: 100dvh;
+  display: flex; flex-direction: column;
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+  z-index: 40;
+}
+
+.brand { display: flex; align-items: center; gap: 11px; padding: 20px 18px 16px; }
+.brand-mark {
+  width: 34px; height: 34px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--contrast);
+  color: var(--mark);
+  box-shadow: var(--shadow-sm);
+}
+.brand-mark .ico { width: 20px; height: 20px; stroke-width: 2.4; }
+.brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.015em; line-height: 1.15; }
+.brand-sub { font-size: 12px; color: var(--ink-3); }
+
+.side-search { position: relative; padding: 0 12px 10px; }
+.side-search .ico {
+  position: absolute; left: 23px; top: 9px;
+  width: 16px; height: 16px; color: var(--ink-3); pointer-events: none;
+}
+.side-search input {
+  width: 100%; height: 34px;
+  padding: 0 38px 0 33px;
+  font-size: 13.5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.side-search input::placeholder { color: var(--ink-3); }
+.side-search input:focus { border-color: var(--accent); box-shadow: var(--focus); }
+.side-search input::-webkit-search-cancel-button { display: none; }
+.side-search kbd { position: absolute; right: 20px; top: 8px; }
+
+.nav { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 10px 16px; }
+.nav-group + .nav-group { margin-top: 14px; }
+.nav-label { padding: 4px 10px; font-size: 11.5px; font-weight: 600; letter-spacing: .01em; color: var(--ink-3); }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; height: 34px; padding: 0 8px 0 10px;
+  border-radius: var(--r-sm);
+  font-size: 14px; font-weight: 500; text-align: left;
+  color: var(--ink-2);
+  transition: background var(--dur-1), color var(--dur-1), box-shadow var(--dur-2);
+}
+.nav-item .ico { width: 17px; height: 17px; color: var(--ink-3); transition: color var(--dur-1); }
+.nav-item:hover { background: var(--hover); color: var(--ink); }
+.nav-item:active { background: var(--active); }
+.nav-item.active {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs), 0 0 0 1px var(--line);
+}
+.nav-item.active .ico { color: var(--accent); }
+.nav-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-kbd { opacity: 0; transition: opacity var(--dur-2); }
+.nav-item:hover .nav-kbd, .nav-item:focus-visible .nav-kbd, body.keys-hint .nav-kbd { opacity: 1; }
+.nav-empty { display: none; padding: 10px; font-size: 13px; color: var(--ink-3); }
+
+.side-foot { display: flex; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.side-btn {
+  flex: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 32px;
+  font-size: 12.5px; font-weight: 550;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-xs);
+  transition: color var(--dur-1), border-color var(--dur-1), transform var(--dur-1) var(--ease-out);
+}
+.side-btn .ico { width: 15px; height: 15px; }
+.side-btn:hover { color: var(--ink); border-color: var(--line-strong); }
+.side-btn:active { transform: scale(.97); }
+.side-btn kbd { min-width: 16px; line-height: 15px; font-size: 10.5px; }
+
+/* ── Topbar & scrim (mobile only) ── */
+.topbar, .scrim { display: none; }
+
+/* ── Main ── */
+.main { min-width: 0; padding: 44px clamp(20px, 4vw, 56px) 96px; }
+.main-inner { max-width: 1040px; margin: 0 auto; }
+
+.section { display: none; }
+.section.active { display: block; animation: section-in var(--dur-3) var(--ease-out); }
+@keyframes section-in { from { opacity: 0; transform: translateY(8px); } }
+
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-bottom: 28px;
+}
+.page-eyebrow { margin-bottom: 6px; font-size: 12.5px; font-weight: 600; color: var(--accent); }
+.page-title { font-size: clamp(26px, 3.2vw, 34px); font-weight: 700; line-height: 1.15; letter-spacing: -.028em; }
+.page-sub { max-width: 64ch; margin-top: 8px; font-size: 15px; color: var(--ink-2); }
+.page-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ── Responsive shell ── */
+@media (max-width: 900px) {
+  body { display: block; }
+  body.nav-open { overflow: hidden; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; gap: 8px;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-title {
+    flex: 1; min-width: 0;
+    font-size: 15px; font-weight: 600; letter-spacing: -.01em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0;
+    width: min(300px, 86vw); height: 100%;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform var(--dur-3) var(--ease-out), visibility 0s var(--dur-3), box-shadow var(--dur-3);
+  }
+  body.nav-open .sidebar {
+    transform: none;
+    visibility: visible;
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3);
+  }
+
+  .scrim {
+    display: block;
+    position: fixed; inset: 0; z-index: 35;
+    background: rgba(8, 8, 12, .36);
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--dur-3) ease;
+  }
+  body.nav-open .scrim { opacity: 1; pointer-events: auto; }
+
+  .main { padding: 24px 16px 88px; }
+  .page-head { margin-bottom: 20px; }
+  .side-search kbd, .nav-kbd { display: none; }
+}
+</style>
+<style>
+/* ═══════════ Reusable components ═══════════ */
+
+/* ── Buttons ──
+   .copy-btn / .ghost-btn / .pt-copy are semantic hooks used by the JS;
+   their look comes from the .btn variants they are paired with. */
+.btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 36px; padding: 0 14px;
+  font-size: 13.5px; font-weight: 600; white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  user-select: none;
+  transition:
+    background var(--dur-1), border-color var(--dur-1), color var(--dur-1),
+    box-shadow var(--dur-2), transform var(--dur-1) var(--ease-out), opacity var(--dur-2);
+}
+.btn .ico { width: 16px; height: 16px; }
+.btn:active:not(:disabled) { transform: scale(.97); }
+.btn:disabled { opacity: .45; }
+
+.btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 1px 2px rgba(0, 0, 0, .1), inset 0 1px 0 rgba(255, 255, 255, .14); }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+
+.btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--line-2); box-shadow: var(--shadow-xs); }
+.btn-secondary:hover:not(:disabled) { background: var(--surface-2); border-color: var(--line-strong); }
+
+.btn-quiet { color: var(--ink-2); }
+.btn-quiet:hover:not(:disabled) { background: var(--hover); color: var(--ink); }
+
+.btn-danger { background: var(--danger); color: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
+.btn-danger:hover:not(:disabled) { background: var(--danger-hover); }
+
+.btn-sm { height: 30px; padding: 0 10px; font-size: 12.5px; gap: 6px; }
+.btn-sm .ico { width: 15px; height: 15px; }
+
+.btn kbd { background: transparent; color: inherit; border-color: currentColor; opacity: .55; margin-left: 2px; }
+
+.btn.copied, .btn.copied:hover { background: var(--success); border-color: var(--success); color: #fff; }
+
+.btn.is-loading { color: transparent !important; pointer-events: none; }
+.btn.is-loading::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--ink-3); border-right-color: transparent;
+  animation: spin .7s linear infinite;
+}
+.btn-primary.is-loading::after { border-color: var(--on-accent); border-right-color: transparent; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.icon-btn {
+  display: inline-grid; place-items: center;
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--r-sm);
+  color: var(--ink-3);
+  transition: background var(--dur-1), color var(--dur-1), transform var(--dur-1) var(--ease-out), opacity var(--dur-2);
+}
+.icon-btn:hover { background: var(--hover); color: var(--ink); }
+.icon-btn:active { transform: scale(.92); background: var(--active); }
+.icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); }
+.icon-btn.bordered { border: 1px solid var(--line-2); background: var(--surface); box-shadow: var(--shadow-xs); width: 36px; height: 36px; }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center;
+  height: 22px; padding: 0 8px;
+  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  color: var(--ink-2);
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.badge.b-gestion { color: var(--success); background: var(--success-soft); border-color: color-mix(in srgb, var(--success) 22%, transparent); }
+.badge.b-crear { color: var(--accent-ink); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+/* ── Card ── */
+.card {
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.card:focus-within { border-color: var(--line-2); box-shadow: var(--shadow-md); }
+.card-header {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px;
+  min-height: 56px; padding: 11px 16px 11px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.card-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.card-body { padding: 20px; }
+
+/* ── Form fields ── */
+.fields-grid { display: grid; gap: 16px; margin-bottom: 20px; }
+.g1 { grid-template-columns: 1fr; }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.span2 { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 550; color: var(--ink-2); }
+.label-opt { margin-left: 4px; font-weight: 400; color: var(--ink-3); }
+
+.field input, .field select, .field textarea {
+  width: 100%; height: 40px; padding: 0 12px;
+  font-size: 14.5px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2), background var(--dur-2);
+}
+.field textarea { height: auto; min-height: 200px; padding: 10px 12px; line-height: 1.6; resize: vertical; }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--line-strong); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); box-shadow: var(--focus); }
+.field input::placeholder, .field textarea::placeholder { color: var(--ink-3); opacity: .8; }
+.field [aria-invalid="true"], .field [aria-invalid="true"]:hover { border-color: var(--danger); }
+.field [aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--danger-soft); }
+.field input::-webkit-calendar-picker-indicator { opacity: .55; cursor: pointer; }
+:root[data-theme="dark"] .field input::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+select, .field select {
+  appearance: none; -webkit-appearance: none;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238C8C92' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+}
+select:disabled { cursor: not-allowed; opacity: .6; }
+
+.hint { margin-top: 2px; font-size: 12.5px; color: var(--ink-3); }
+.hint strong { font-weight: 600; color: var(--ink-2); }
+.field-error { font-size: 12.5px; font-weight: 500; color: var(--danger); }
+.field-error:empty { display: none; }
+.field-error:not(:empty) { animation: fade-up var(--dur-2) var(--ease-out); }
+
+/* Search field with icon */
+.search-field { position: relative; flex: 1; min-width: 0; max-width: 440px; }
+.search-field > .ico {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--ink-3); pointer-events: none;
+}
+.search-field input {
+  width: 100%; height: 38px; padding: 0 12px 0 36px;
+  font-size: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.search-field input::placeholder { color: var(--ink-3); }
+.search-field input:focus { border-color: var(--accent); box-shadow: var(--focus); }
+
+/* Select with leading icon */
+.select-field { position: relative; }
+.select-field > .ico {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  width: 15px; height: 15px; color: var(--ink-3); pointer-events: none;
+}
+.select-field select {
+  height: 38px; padding-left: 33px;
+  font-size: 13.5px; font-weight: 550;
+  background-color: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.select-field select:hover { border-color: var(--line-strong); }
+.select-field select:focus { border-color: var(--accent); box-shadow: var(--focus); }
+
+/* ── Segmented control ── */
+.segmented {
+  display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px;
+  padding: 3px;
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.seg {
+  height: 30px; padding: 0 14px;
+  font-size: 13px; font-weight: 550;
+  color: var(--ink-2);
+  border-radius: 7px;
+  transition: background var(--dur-2), color var(--dur-2), box-shadow var(--dur-2);
+}
+.seg:hover { color: var(--ink); }
+.seg.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm), 0 0 0 1px var(--line); }
+
+/* ── Chips ── */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  height: 30px; padding: 0 12px;
+  font-size: 13px; font-weight: 550; white-space: nowrap;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  transition: background var(--dur-1), color var(--dur-1), border-color var(--dur-1), transform var(--dur-1) var(--ease-out);
+}
+.chip .ico { width: 14px; height: 14px; }
+.chip:hover { color: var(--ink); border-color: var(--line-strong); }
+.chip:active { transform: scale(.96); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.chip-count { font-size: 11.5px; font-weight: 600; opacity: .6; }
+
+/* ── Generated text output ── */
+.output-wrap {
+  position: relative;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.output-wrap::before {
+  content: ""; position: absolute; left: -1px; top: 14px; bottom: 14px; width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+  transition: opacity var(--dur-3), transform var(--dur-3) var(--ease-out);
+}
+.output-wrap.is-empty::before { opacity: 0; transform: scaleY(.3); }
+.output-text { min-height: 26px; font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; }
+.output-text strong { font-weight: 600; color: var(--accent-ink); }
+.output-text em { font-style: normal; font-size: 14px; color: var(--ink-3); }
+.output-wrap .copy-btn { align-self: flex-end; }
+
+/* ── Results ── */
+.calc-result { display: none; }
+.calc-result.visible { display: block; animation: fade-up var(--dur-3) var(--ease-out); }
+.calc-result.visible + .empty-note { display: none; }
+.empty-note {
+  padding: 16px 18px;
+  font-size: 14px; color: var(--ink-3);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-md);
+}
+
+.calc-total {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px;
+  padding: 20px 22px;
+  color: var(--contrast-ink);
+  background: var(--contrast);
+  border-radius: var(--r-md);
+}
+.calc-total.sum { margin-top: 16px; }
+.calc-total-label { width: 100%; font-size: 13px; font-weight: 500; color: var(--contrast-muted); }
+.calc-total-value { flex: 1; font-size: clamp(32px, 5vw, 46px); font-weight: 700; line-height: 1.05; letter-spacing: -.035em; }
+.calc-total .btn-secondary { background: transparent; color: var(--contrast-ink); border-color: color-mix(in srgb, var(--contrast-ink) 30%, transparent); box-shadow: none; }
+.calc-total .btn-secondary:hover { background: color-mix(in srgb, var(--contrast-ink) 10%, transparent); border-color: color-mix(in srgb, var(--contrast-ink) 55%, transparent); }
+
+.calc-result-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.calc-stat {
+  min-width: 0; padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.calc-stat-label { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.calc-stat-value { margin-top: 4px; font-size: 20px; font-weight: 650; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calc-stat.hero { background: var(--contrast); border-color: var(--contrast); }
+.calc-stat.hero .calc-stat-label { color: var(--contrast-muted); }
+.calc-stat.hero .calc-stat-value { font-size: 24px; color: var(--contrast-ink); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 100;
+  display: flex; align-items: center; gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px 10px 12px;
+  font-size: 13.5px; font-weight: 550;
+  color: var(--contrast-ink);
+  background: var(--contrast);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 14px) scale(.96);
+  transition: opacity var(--dur-2) ease, transform var(--dur-3) var(--ease-out);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast .ico { width: 17px; height: 17px; stroke-width: 2.2; }
+.toast[data-kind="success"] .ico { color: var(--toast-ok); }
+.toast[data-kind="info"] .ico { color: var(--mark); }
+.toast[data-kind="error"] .ico { color: var(--danger); }
+
+/* ── Dialogs ── */
+dialog {
+  margin: auto; padding: 0;
+  width: min(560px, calc(100% - 32px));
+  max-height: min(760px, calc(100% - 48px));
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+dialog[open] { display: flex; flex-direction: column; animation: dlg-in var(--dur-3) var(--ease-out); }
+dialog::backdrop { background: rgba(10, 10, 14, .38); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+dialog[open]::backdrop { animation: fade-in var(--dur-3) ease; }
+dialog.is-closing { animation: dlg-out .15s var(--ease-in) forwards; }
+dialog.is-closing::backdrop { animation: fade-out .15s ease forwards; }
+dialog > form { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+.dlg-sm { width: min(420px, calc(100% - 32px)); }
+.dlg-lg { width: min(640px, calc(100% - 32px)); }
+
+.dlg-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 14px 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.dlg-head h2 { font-size: 17px; font-weight: 650; letter-spacing: -.015em; }
+.dlg-body { flex: 1; min-height: 0; overflow: auto; padding: 18px 20px 20px; }
+.dlg-body h3 { margin: 18px 0 4px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.dlg-body h3:first-child { margin-top: 0; }
+.dlg-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 12px 20px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line);
+}
+.dlg-hint { display: flex; align-items: center; gap: 4px; margin-right: auto; font-size: 12px; color: var(--ink-3); }
+
+/* Confirmation */
+.confirm-body { padding: 24px 24px 20px; text-align: center; }
+.confirm-icon {
+  width: 44px; height: 44px; margin: 0 auto 14px;
+  display: grid; place-items: center;
+  color: var(--danger); background: var(--danger-soft);
+  border-radius: 50%;
+}
+#confirmDlg[data-tone="primary"] .confirm-icon { color: var(--accent); background: var(--accent-soft); }
+.confirm-icon .ico { width: 22px; height: 22px; }
+.confirm-body h2 { font-size: 17px; font-weight: 650; letter-spacing: -.015em; }
+.confirm-body p { margin-top: 6px; font-size: 14px; color: var(--ink-2); overflow-wrap: anywhere; }
+#confirmDlg .dlg-foot { justify-content: stretch; background: transparent; border-top: 0; padding: 0 20px 20px; }
+#confirmDlg .dlg-foot .btn { flex: 1; height: 38px; }
+
+/* ── Dropdown menu ── */
+.menu-wrap { position: relative; }
+.menu {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 25;
+  min-width: 220px; padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  transform-origin: top right;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateY(-4px) scale(.97);
+  transition: opacity .14s ease, transform .2s var(--ease-out), visibility 0s .2s;
+}
+.menu.open {
+  opacity: 1; visibility: visible; pointer-events: auto; transform: none;
+  transition: opacity .14s ease, transform .2s var(--ease-out);
+}
+.menu-item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; height: 34px; padding: 0 10px;
+  font-size: 13.5px; font-weight: 500; text-align: left;
+  border-radius: 7px;
+  transition: background var(--dur-1);
+}
+.menu-item .ico { width: 16px; height: 16px; color: var(--ink-3); }
+.menu-item:hover, .menu-item:focus-visible { background: var(--hover); outline: none; }
+.menu-sep { height: 1px; margin: 6px 4px; background: var(--line); }
+
+/* ── Empty states ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 56px 24px;
+  text-align: center;
+  background: var(--surface-2);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-lg);
+  animation: fade-up var(--dur-3) var(--ease-out);
+}
+.empty-icon {
+  width: 52px; height: 52px; margin-bottom: 16px;
+  display: grid; place-items: center;
+  color: var(--accent); background: var(--accent-soft);
+  border-radius: 14px;
+}
+.empty-icon .ico { width: 24px; height: 24px; }
+.empty-state h3 { font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+.empty-state p { max-width: 46ch; margin: 6px 0 18px; font-size: 14px; color: var(--ink-2); }
+.empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+/* ── Shared keyframes ── */
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } }
+@keyframes dlg-in { from { opacity: 0; transform: translateY(10px) scale(.97); } }
+@keyframes dlg-out { to { opacity: 0; transform: translateY(6px) scale(.98); } }
+@keyframes sheet-in { from { transform: translateY(100%); } }
+@keyframes sheet-out { to { transform: translateY(100%); } }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  .card-header { padding-left: 16px; padding-right: 12px; }
+  .card-body { padding: 16px; }
+  .calc-result-grid { grid-template-columns: 1fr 1fr; }
+  .calc-stat.hero { grid-column: 1 / -1; order: -1; }
+  .calc-stat-value { font-size: 18px; }
+  .output-wrap .copy-btn { align-self: stretch; height: 42px; }
+  .btn kbd { display: none; }
+  .search-field { max-width: none; }
+}
+@media (max-width: 640px) {
+  /* Dialogs become bottom sheets */
+  dialog:not(.dlg-sm) {
+    width: 100%; max-width: 100%;
+    max-height: calc(100% - 32px);
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  dialog:not(.dlg-sm)[open] { animation: sheet-in var(--dur-3) var(--ease-out); }
+  dialog:not(.dlg-sm).is-closing { animation: sheet-out .2s var(--ease-in) forwards; }
+  .dlg-hint { display: none; }
+  .dlg-foot .btn { flex: 1; height: 42px; }
+}
+</style>
+<style>
+/* ═══════════ Tool-specific styles: calculators, plan ticket, price table, PQR ═══════════ */
+
+/* ── Stepper ── */
+.stepper { display: flex; }
+.stepper input { border-radius: 0 !important; text-align: center; -moz-appearance: textfield; box-shadow: none !important; }
+.stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.stepper button {
+  width: 42px; flex-shrink: 0;
+  font-size: 18px; font-weight: 500;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.stepper button:first-child { border-right: 0; border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.stepper button:last-child { border-left: 0; border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.stepper button:hover { color: var(--ink); background: var(--sunken); }
+.stepper button:active { background: var(--active); }
+
+/* ── Fecha final del plan ── */
+.plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+.plan-layout .card { margin-bottom: 0; }
+
+.ticket {
+  position: sticky; top: 24px;
+  overflow: hidden;
+  color: var(--contrast-ink);
+  background: var(--contrast);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+}
+.ticket-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 10px 10px 18px;
+  font-size: 13px; font-weight: 600;
+  color: #1C1C1E;
+  background: var(--mark);
+}
+.ticket-head .btn { color: #1C1C1E; background: transparent; border-color: rgba(28, 28, 30, .35); box-shadow: none; }
+.ticket-head .btn:hover { background: rgba(28, 28, 30, .08); border-color: rgba(28, 28, 30, .6); }
+.ticket-body { padding: 18px 20px 20px; }
+.tk-week { font-size: 14px; color: var(--contrast-muted); text-transform: capitalize; }
+.tk-day { margin: 6px 0 4px; font-size: clamp(88px, 10vw, 120px); font-weight: 700; line-height: .9; letter-spacing: -.055em; }
+.tk-month { font-size: 22px; font-weight: 650; letter-spacing: -.02em; }
+.ticket-perf { margin: 0 20px; border-top: 2px dashed color-mix(in srgb, var(--contrast-muted) 45%, transparent); }
+.ticket-foot { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px 20px 18px; }
+.ticket-foot dt { font-size: 12px; color: var(--contrast-muted); }
+.ticket-foot dd { margin-top: 2px; font-size: 16px; font-weight: 650; }
+.ticket.empty .tk-day { font-size: 56px; color: var(--contrast-muted); }
+.ticket.empty .tk-month { font-size: 15px; font-weight: 500; color: var(--contrast-muted); }
+.tk-day.pop { animation: pop .3s var(--ease-out); }
+@keyframes pop { from { transform: translateY(6px); opacity: .3; } }
+
+.trail { margin-top: 4px; padding-top: 18px; border-top: 1px dashed var(--line-2); }
+.trail-title { margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.trail ol { list-style: none; }
+.trail li { position: relative; display: grid; grid-template-columns: 16px 1fr auto; gap: 12px; padding-bottom: 14px; }
+.trail li::before {
+  content: ""; position: relative; z-index: 1;
+  width: 11px; height: 11px; margin-top: 5px;
+  border: 2px solid var(--accent); border-radius: 50%;
+  background: var(--surface);
+}
+.trail li:not(:last-child)::after { content: ""; position: absolute; left: 4.5px; top: 18px; bottom: 0; width: 2px; background: var(--line); }
+.trail li:last-child::before { background: var(--mark); border-color: var(--mark); }
+.trail .what { font-size: 14px; font-weight: 600; }
+.trail .what em { display: block; font-size: 13px; font-style: normal; font-weight: 400; color: var(--ink-3); text-transform: none; }
+.trail .when { font-weight: 650; }
+
+/* ── Filas de cálculo ── */
+.formula { margin: -2px 0 16px; font-size: 13px; color: var(--ink-3); }
+.formula strong { font-weight: 600; color: var(--ink-2); }
+.rows { display: flex; flex-direction: column; gap: 10px; }
+.row {
+  display: grid; align-items: start; gap: 12px 14px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.row.is-new { animation: fade-up var(--dur-3) var(--ease-out); }
+.row:focus-within { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); box-shadow: 0 0 0 3px var(--accent-soft); }
+.row .field label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-range { grid-template-columns: repeat(2, minmax(0, 1fr)) 140px 36px; }
+.row-pro { grid-template-columns: repeat(4, minmax(0, 1fr)) 160px 36px; }
+.out { display: flex; flex-direction: column; align-items: flex-end; margin-top: 24px; }
+.out b { font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -.025em; }
+.out small { margin-top: 4px; font-size: 12px; color: var(--ink-3); }
+.row.neg .out b, .warn { color: var(--warn); }
+.del {
+  display: grid; place-items: center;
+  width: 36px; height: 40px; margin-top: 25px;
+  color: var(--ink-3);
+  border-radius: var(--r-sm);
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.del .ico { width: 17px; height: 17px; }
+.del:hover { color: var(--danger); background: var(--danger-soft); }
+.breakdown {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; gap: 4px 20px;
+  padding-top: 10px;
+  font-size: 13px; color: var(--ink-3);
+  border-top: 1px solid var(--line);
+}
+.breakdown b { font-weight: 650; color: var(--ink); }
+.warn { grid-column: 1 / -1; font-size: 13px; font-weight: 600; }
+.warn:empty { display: none; }
+
+.add-row {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; margin-top: 10px; padding: 11px;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--ink-2);
+  border: 1.5px dashed var(--line-2);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
+}
+.add-row .ico { width: 16px; height: 16px; }
+.add-row:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.add-row kbd { background: transparent; color: inherit; border-color: currentColor; opacity: .55; }
+.rows-empty { padding: 22px; text-align: center; font-size: 14px; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-md); }
+
+.field-below { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 8px; min-height: 18px; }
+.field-below .pick { order: 1; }
+.field-below .plan-tag { order: 2; flex-basis: 100%; line-height: 1.3; white-space: normal; }
+.field-below .plan-tag:empty { display: none; }
+.plan-tag { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.pick { margin-left: auto; padding: 0; font-size: 12px; font-weight: 600; white-space: nowrap; color: var(--accent); }
+.pick:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Tabla de valores ── */
+.consult {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(210px, 1.1fr); align-items: end; gap: 14px;
+  margin-bottom: 16px; padding: 20px 22px;
+  color: var(--contrast-ink);
+  background: var(--contrast);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+}
+.consult .field label, .consult .res small { color: var(--contrast-muted); }
+.consult select {
+  color: var(--contrast-ink);
+  background-color: color-mix(in srgb, var(--contrast-ink) 8%, transparent);
+  border-color: color-mix(in srgb, var(--contrast-ink) 18%, transparent);
+  box-shadow: none;
+}
+.consult select:hover { border-color: color-mix(in srgb, var(--contrast-ink) 35%, transparent); }
+.consult select:focus { border-color: var(--mark); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mark) 35%, transparent); }
+.consult select option { color: #1C1C1E; background: #fff; }
+.consult .res { min-width: 0; text-align: right; }
+.consult .res small { display: block; font-size: 12.5px; }
+.consult .res b { display: block; font-size: clamp(28px, 4vw, 38px); font-weight: 700; line-height: 1.1; letter-spacing: -.035em; }
+
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 16px; align-items: start; }
+.cat-grid .card { margin-bottom: 0; }
+.cat-head, .cat-row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) 116px 32px; align-items: center; gap: 6px; }
+.cat-head { padding-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.cat-row { padding: 3px 0; }
+.cat-row input {
+  width: 100%; min-width: 0; height: 36px; padding: 0 10px;
+  font-size: 13.5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2), background var(--dur-2);
+}
+.cat-row input:hover { border-color: var(--line-2); }
+.cat-row input:focus { background: var(--surface); border-color: var(--accent); box-shadow: var(--focus); }
+.cat-row.hit input { border-color: var(--mark); background: color-mix(in srgb, var(--mark) 8%, var(--surface)); }
+.cat-row .del { width: 32px; height: 36px; margin: 0; }
+.cat-empty { padding: 8px 0; font-size: 14px; color: var(--ink-3); }
+
+/* ── Plan picker dialog ── */
+.pk-groups { display: grid; margin-top: 12px; }
+.pk-names { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.pk-list { display: flex; flex-direction: column; gap: 6px; }
+.pk-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 14px;
+  font-size: 14.5px; text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur-1), background var(--dur-1);
+}
+.pk-item b { font-weight: 650; }
+.pk-item:hover, .pk-item.sel { border-color: var(--accent); background: var(--accent-soft); }
+.pk-empty { padding: 10px 0; font-size: 14px; color: var(--ink-3); }
+.pk-hint { margin-top: 12px; font-size: 12px; color: var(--ink-3); }
+dialog .search-field { max-width: none; }
+
+/* ── Shortcuts dialog ── */
+.sc { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; font-size: 14px; border-bottom: 1px solid var(--line); }
+.sc:last-child { border-bottom: 0; }
+.sc .keys { display: flex; flex-shrink: 0; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-3); }
+
+/* ── Respuestas PQR ── */
+.list-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 16px; }
+.list-count { font-size: 13px; color: var(--ink-3); }
+.pqr-list { display: flex; flex-direction: column; gap: 10px; }
+.pt-item {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-2), box-shadow var(--dur-2);
+}
+.pt-item:hover { border-color: var(--line-2); }
+.pt-item:focus-within { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); box-shadow: 0 0 0 3px var(--accent-soft); }
+.pt-head { display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 18px; border-bottom: 1px solid var(--line); }
+.pt-key { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; }
+.pt-actions { display: flex; align-items: center; gap: 4px; }
+.pt-body {
+  padding: 14px 18px 16px;
+  font-size: 14.5px; line-height: 1.7;
+  color: var(--ink-2);
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  cursor: text; outline: none;
+  transition: background var(--dur-2), color var(--dur-2);
+}
+.pt-body:focus { background: var(--surface-2); color: var(--ink); }
+.no-results { display: none; padding: 18px 2px; font-size: 14px; color: var(--ink-3); }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .plan-layout { grid-template-columns: 1fr; }
+  .ticket { position: static; }
+  .row-pro { grid-template-columns: repeat(2, minmax(0, 1fr)) 36px; }
+  .row-pro .f-a { grid-column: 1; grid-row: 1; }
+  .row-pro .f-b { grid-column: 2; grid-row: 1; }
+  .row-pro .del { grid-column: 3; grid-row: 1; }
+  .row-pro .out { grid-column: 1 / 3; order: 5; align-items: flex-start; margin-top: 0; }
+  .consult { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .consult .res { grid-column: 1 / -1; text-align: left; }
+}
+@media (max-width: 900px) {
+  .row-range { grid-template-columns: 1fr 1fr 36px; }
+  .row-range .del { grid-column: 3; grid-row: 1; }
+  .row-range .out { grid-column: 1 / 3; align-items: flex-start; margin-top: 0; }
+  .consult { grid-template-columns: 1fr; padding: 18px; }
+  .add-row kbd { display: none; }
+  .pt-head { flex-wrap: wrap; padding-left: 14px; }
+  .pt-key { flex-basis: 100%; order: -1; }
+  .pt-actions { margin-left: auto; }
+  .pt-body { padding: 12px 14px 14px; }
+}
+@media (max-width: 560px) {
+  .row-pro { grid-template-columns: 1fr 1fr 36px; }
+  .row { padding: 12px; }
+  .cat-head, .cat-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 100px 32px; }
+  .ticket-foot dd { font-size: 15px; }
+}
+</style>
+<style>
+/* ═══════════ Plantillas (user templates) ═══════════ */
+
+.tpl-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.tpl-count { margin-left: auto; font-size: 13px; color: var(--ink-3); }
+
+.tpl-filters {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 18px;
+}
+
+.tpl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 14px;
+}
+
+/* ── Card ── */
+.tpl-card {
+  position: relative;
+  display: flex; flex-direction: column; gap: 8px;
+  min-height: 188px; padding: 16px 16px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2), border-color var(--dur-2);
+}
+.tpl-card:hover { transform: translateY(-2px); border-color: var(--line-2); box-shadow: var(--shadow-md); }
+.tpl-card:active:not(:has(button:active)) { transform: translateY(0) scale(.995); }
+.tpl-card:focus-visible { outline: none; border-color: var(--accent); box-shadow: var(--focus), var(--shadow-md); }
+
+.tpl-card.is-entering { animation: card-in var(--dur-3) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 22ms); }
+.tpl-card.is-leaving { animation: card-out .2s var(--ease-in) forwards; pointer-events: none; }
+.tpl-card.is-highlight { animation: card-highlight 1.4s var(--ease-out); }
+@keyframes card-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+@keyframes card-out { to { opacity: 0; transform: scale(.94); } }
+@keyframes card-highlight {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent), var(--shadow-sm); border-color: var(--accent); }
+  100% { box-shadow: 0 0 0 10px transparent, var(--shadow-sm); }
+}
+
+.tpl-card-head { display: flex; align-items: flex-start; gap: 8px; }
+.tpl-name {
+  flex: 1; min-width: 0;
+  font-size: 15px; font-weight: 600; line-height: 1.35; letter-spacing: -.012em;
+  overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tpl-fav { margin: -6px -6px 0 0; }
+.tpl-fav[aria-pressed="true"] { color: var(--mark); }
+.tpl-fav[aria-pressed="true"] .ico { fill: currentColor; }
+.tpl-fav[aria-pressed="true"]:hover { color: var(--mark); }
+.tpl-fav.pulse .ico { animation: star-pop .36s var(--ease-out); }
+@keyframes star-pop { 40% { transform: scale(1.3) rotate(-8deg); } }
+
+.tpl-preview {
+  flex: 1;
+  font-size: 13.5px; line-height: 1.6;
+  color: var(--ink-2);
+  white-space: pre-line; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tpl-card mark {
+  padding: 0 1px;
+  color: inherit;
+  background: color-mix(in srgb, var(--mark) 38%, transparent);
+  border-radius: 3px;
+}
+
+.tpl-meta {
+  display: flex; align-items: center; gap: 8px; min-width: 0;
+  font-size: 12px; color: var(--ink-3);
+}
+.tpl-meta .badge { flex-shrink: 1; min-width: 0; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+.tpl-meta [data-meta] { flex-shrink: 0; white-space: nowrap; }
+
+.tpl-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin: 2px -6px 0 -6px; padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.tpl-actions { display: flex; align-items: center; gap: 2px; }
+
+@media (hover: hover) {
+  .tpl-actions .icon-btn,
+  .tpl-fav[aria-pressed="false"] { opacity: 0; }
+  .tpl-card:hover .tpl-actions .icon-btn,
+  .tpl-card:focus-within .tpl-actions .icon-btn,
+  .tpl-card:hover .tpl-fav,
+  .tpl-card:focus-within .tpl-fav { opacity: 1; }
+}
+
+/* ── Editor ── */
+#tplCat::-webkit-calendar-picker-indicator { display: none !important; }
+.tpl-form .field + .field { margin-top: 16px; }
+.cat-suggest { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.cat-suggest .chip { height: 26px; padding: 0 10px; font-size: 12px; }
+.field-foot { display: flex; justify-content: space-between; gap: 12px; }
+.char-count { margin-left: auto; font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.tpl-tip { font-size: 12.5px; color: var(--ink-3); }
+.tpl-tip code {
+  padding: 1px 5px;
+  font: 600 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ink-2);
+  background: var(--sunken);
+  border-radius: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .tpl-toolbar .search-field { flex-basis: 100%; }
+  .tpl-toolbar .select-field { flex: 1; }
+  .tpl-toolbar .select-field select { width: 100%; }
+  .tpl-filters {
+    flex-wrap: nowrap; overflow-x: auto;
+    margin: 0 -16px 16px; padding: 2px 16px;
+    scrollbar-width: none;
+  }
+  .tpl-filters::-webkit-scrollbar { display: none; }
+  .tpl-card { min-height: 0; }
+  .page-head .page-actions { width: 100%; }
+  .page-head .page-actions .btn-primary { flex: 1; }
+}
+</style>
+</head>
+<body class="preload">
+
+<!-- ═══════════ Icon sprite ═══════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" hidden>
+  <symbol id="i-logo" viewBox="0 0 24 24"><path d="M6.5 8v8M17.5 8v8M3.5 10v4M20.5 10v4M6.5 12h11"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+  <symbol id="i-medical" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M4.2 7l15.6 10M4.2 17 19.8 7M9 4l3 2 3-2M9 20l3-2 3 2"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+  <symbol id="i-cal-edit" viewBox="0 0 24 24"><path d="M21 11V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6M16 2v4M8 2v4M3 10h18"/><path d="M18.4 14.6a1.9 1.9 0 0 1 2.7 2.7L16.5 22H14v-2.5Z"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></symbol>
+  <symbol id="i-cal-check" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></symbol>
+  <symbol id="i-cal-range" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M7 14h4M13 18h4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a2 2 0 0 1 2 2v3h-4a2 2 0 0 0 0 4h4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/><path d="M8 9h8M8 13h5"/></symbol>
+  <symbol id="i-template" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="9" height="7" rx="1.5"/><rect x="16" y="14" width="5" height="7" rx="1.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-duplicate" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2M15 12v6M12 15h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/><path d="M12 7v6M9 10h6"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="m3 8 4-4 4 4M7 4v16M21 16l-4 4-4-4M17 20V4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+</svg>
+
+<!-- ═══════════ Topbar (mobile) ═══════════ -->
+<header class="topbar">
+  <button class="icon-btn" id="menuBtn" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false">
+    <svg class="ico"><use href="#i-menu"/></svg>
+  </button>
+  <span class="topbar-title" id="topbarTitle"></span>
+  <button class="icon-btn" data-act="theme" aria-label="Cambiar tema">
+    <svg class="ico"><use data-theme-icon href="#i-moon"/></svg>
+  </button>
+</header>
+
+<!-- ═══════════ Sidebar ═══════════ -->
+<nav class="sidebar" id="sidebar" aria-label="Herramientas">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true"><svg class="ico"><use href="#i-logo"/></svg></div>
+    <div>
+      <div class="brand-name">MYBT</div>
+      <div class="brand-sub">Herramientas BodyTech</div>
+    </div>
+  </div>
+
+  <div class="side-search">
+    <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="search" id="navSearch" placeholder="Buscar herramienta" aria-label="Buscar herramienta" autocomplete="off">
+    <kbd>/</kbd>
+  </div>
+
+  <div class="nav" id="nav">
+    <div class="nav-group">
+      <div class="nav-label">Novedades</div>
+      <button class="nav-item" data-sec="incap"><svg class="ico"><use href="#i-medical"/></svg><span class="nav-text">Incapacidad</span></button>
+      <button class="nav-item" data-sec="congel"><svg class="ico"><use href="#i-snow"/></svg><span class="nav-text">Congelación</span></button>
+      <button class="nav-item" data-sec="congel_retro"><svg class="ico"><use href="#i-history"/></svg><span class="nav-text">Congelación retroactiva</span></button>
+      <button class="nav-item" data-sec="fechainicio"><svg class="ico"><use href="#i-cal-edit"/></svg><span class="nav-text">Cambio de fecha de inicio</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Cambio de plan</div>
+      <button class="nav-item" data-sec="calc_mes"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora mensual</span></button>
+      <button class="nav-item" data-sec="calc_tri"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora trimestral</span></button>
+      <button class="nav-item" data-sec="calc_anio"><svg class="ico"><use href="#i-calc"/></svg><span class="nav-text">Calculadora anual</span></button>
+      <button class="nav-item" data-sec="valores"><svg class="ico"><use href="#i-table"/></svg><span class="nav-text">Tabla de valores</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Fechas</div>
+      <button class="nav-item" data-sec="fecha_final"><svg class="ico"><use href="#i-cal-check"/></svg><span class="nav-text">Fecha final del plan</span></button>
+      <button class="nav-item" data-sec="dias"><svg class="ico"><use href="#i-cal-range"/></svg><span class="nav-text">Días entre fechas</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Otros cálculos</div>
+      <button class="nav-item" data-sec="calc_saldo"><svg class="ico"><use href="#i-wallet"/></svg><span class="nav-text">Saldo a favor</span></button>
+      <button class="nav-item" data-sec="calc_congel"><svg class="ico"><use href="#i-percent"/></svg><span class="nav-text">3.ª congelación</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Respuestas</div>
+      <button class="nav-item" data-sec="pqr"><svg class="ico"><use href="#i-message"/></svg><span class="nav-text">Respuestas PQR</span></button>
+      <button class="nav-item" data-sec="plantillas"><svg class="ico"><use href="#i-template"/></svg><span class="nav-text">Plantillas</span></button>
+    </div>
+    <p class="nav-empty" id="navEmpty">Ninguna herramienta coincide.</p>
+  </div>
+
+  <div class="side-foot">
+    <button class="side-btn" data-act="help" title="Atajos de teclado (?)"><svg class="ico"><use href="#i-keyboard"/></svg>Atajos</button>
+    <button class="side-btn" data-act="theme" title="Cambiar tema (Alt + T)"><svg class="ico"><use data-theme-icon href="#i-moon"/></svg><span data-theme-label>Oscuro</span></button>
+  </div>
+</nav>
+<div class="scrim" id="scrim" aria-hidden="true"></div>
+
+<!-- ═══════════ Main ═══════════ -->
+<main class="main">
+<div class="main-inner">
+
+  <!-- INCAPACIDAD -->
+  <section class="section" id="sec-incap">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Incapacidad médica</h1><p class="page-sub">Calcula automáticamente los días de la novedad y la nueva fecha.</p></div></header>
+
+    <div class="card" data-gen="c5">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c5_ini">Fecha inicio</label><input type="date" id="c5_ini"></div>
+          <div class="field"><label for="c5_fin">Fecha fin incapacidad</label><input type="date" id="c5_fin"></div>
+          <div class="field"><label for="c5_corte">Fecha fin servicio actual</label><input type="date" id="c5_corte"></div>
+          <div class="field"><label for="c5_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c5_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c5_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c6">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c6_ini">Fecha inicio</label><input type="date" id="c6_ini"></div>
+          <div class="field"><label for="c6_fin">Fecha fin incapacidad</label><input type="date" id="c6_fin"></div>
+          <div class="field"><label for="c6_corte">Fecha de corte actual</label><input type="date" id="c6_corte"></div>
+          <div class="field"><label for="c6_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c6_pqr" placeholder="3309372"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c6_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONGELACIÓN -->
+  <section class="section" id="sec-congel">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Congelación</h1><p class="page-sub">Novedad de congelación de plan, año o débito.</p></div></header>
+
+    <div class="card" data-gen="c7">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c7_ini">Fecha inicio</label><input type="date" id="c7_ini"></div>
+          <div class="field"><label for="c7_fin">Fecha fin congelación</label><input type="date" id="c7_fin"></div>
+          <div class="field"><label for="c7_corte">Fecha fin servicio actual</label><input type="date" id="c7_corte"></div>
+          <div class="field"><label for="c7_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c7_pqr" placeholder="3359023"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c7_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c8">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c8_ini">Fecha inicio</label><input type="date" id="c8_ini"></div>
+          <div class="field"><label for="c8_fin">Fecha fin congelación</label><input type="date" id="c8_fin"></div>
+          <div class="field"><label for="c8_corte">Fecha de corte actual</label><input type="date" id="c8_corte"></div>
+          <div class="field"><label for="c8_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c8_pqr" placeholder="3350239"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c8_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONGELACIÓN RETROACTIVA -->
+  <section class="section" id="sec-congel_retro">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Congelación retroactiva</h1><p class="page-sub">Novedades de congelación aplicadas con fecha anterior a la actual.</p></div></header>
+
+    <div class="card" data-gen="c9">
+      <div class="card-header"><span class="card-title">Plan Año</span><span class="badge">Retro · Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c9_ini">Fecha inicio</label><input type="date" id="c9_ini"></div>
+          <div class="field"><label for="c9_fin">Fecha fin congelación</label><input type="date" id="c9_fin"></div>
+          <div class="field"><label for="c9_corte">Fecha fin servicio actual</label><input type="date" id="c9_corte"></div>
+          <div class="field"><label for="c9_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c9_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c9_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+
+    <div class="card" data-gen="c10">
+      <div class="card-header"><span class="card-title">Plan Débito</span><span class="badge">Retro · Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g4">
+          <div class="field"><label for="c10_ini">Fecha inicio</label><input type="date" id="c10_ini"></div>
+          <div class="field"><label for="c10_fin">Fecha fin congelación</label><input type="date" id="c10_fin"></div>
+          <div class="field"><label for="c10_corte">Fecha de corte actual</label><input type="date" id="c10_corte"></div>
+          <div class="field"><label for="c10_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c10_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c10_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAMBIO DE FECHA DE INICIO -->
+  <section class="section" id="sec-fechainicio">
+    <header class="page-head"><div><p class="page-eyebrow">Novedades</p><h1 class="page-title">Cambio de fecha de inicio</h1><p class="page-sub">Corrección de la fecha de inicio del plan por error de digitación.</p></div></header>
+    <div class="card" data-gen="c11">
+      <div class="card-header"><span class="card-title">Nueva fecha de inicio</span><span class="badge">Fecha inicio</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="c11_actual">Fecha inicio actual (errónea)</label><input type="date" id="c11_actual"></div>
+          <div class="field"><label for="c11_nueva">Nueva fecha inicio</label><input type="date" id="c11_nueva"></div>
+          <div class="field"><label for="c11_pqr">N.º PQR</label><input type="text" inputmode="numeric" id="c11_pqr" placeholder="3199796"></div>
+        </div>
+        <div class="output-wrap is-empty"><p class="output-text" id="c11_out" aria-live="polite"></p><button class="btn btn-primary copy-btn" data-act="copyout"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA MENSUAL -->
+  <section class="section" id="sec-calc_mes">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora mensual</h1><p class="page-sub">Valor a cobrar por cambio de plan Débito. Añade los periodos que necesites; el total se suma solo.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Débito</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del débito ÷ <strong>30 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-mes"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-mes">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA TRIMESTRAL -->
+  <section class="section" id="sec-calc_tri">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora trimestral</h1><p class="page-sub">Igual que la mensual, pero el valor del trimestre se divide primero entre 3 para llevarlo a un mes.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Trimestre</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del trimestre ÷ <strong>3 meses</strong> ÷ <strong>30 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-tri"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-tri">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA ANUAL -->
+  <section class="section" id="sec-calc_anio">
+    <header class="page-head"><div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Calculadora anual</h1><p class="page-sub">Valor a cobrar por cambio de plan Año, con el valor diario sobre 365 días.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Cambio de plan · Año</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <p class="formula">Valor del plan ÷ <strong>365 días</strong> = valor del día. Días = fecha fin − fecha inicio.</p>
+        <div class="rows" id="rows-anio"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total a cobrar</span><span class="calc-total-value" id="total-anio">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLA DE VALORES -->
+  <section class="section" id="sec-valores">
+    <header class="page-head">
+      <div><p class="page-eyebrow">Cambio de plan</p><h1 class="page-title">Tabla de valores</h1><p class="page-sub">Precios de julio 2026 por plan y categoría. Desde cualquier calculadora usa «Elegir plan» o Alt + P y el valor se pone solo.</p></div>
+      <div class="page-actions"><button class="btn btn-secondary" data-act="reset"><svg class="ico"><use href="#i-reset"/></svg>Restablecer precios</button></div>
+    </header>
+    <div class="consult" aria-live="polite">
+      <div class="field"><label for="q-g">Tipo</label><select id="q-g"><option value="mes">Mensual · Débito</option><option value="tri">Trimestral</option><option value="anio">Anual</option></select></div>
+      <div class="field"><label for="q-y">Nombre del plan</label><select id="q-y"></select></div>
+      <div class="field"><label for="q-c">Categoría</label><select id="q-c"></select></div>
+      <div class="res"><small id="q-note">Valor del plan</small><b id="q-v">—</b></div>
+    </div>
+    <div class="cat-grid">
+      <div class="card" data-gpanel="mes"><div class="card-header"><span class="card-title">Mensual · Débito</span><span class="badge">÷ 30</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-mes"></div><button class="add-row" data-act="catadd" data-g="mes"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan mensual</button></div></div>
+      <div class="card" data-gpanel="tri"><div class="card-header"><span class="card-title">Trimestral</span><span class="badge">÷ 3 ÷ 30</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-tri"></div><button class="add-row" data-act="catadd" data-g="tri"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan trimestral</button></div></div>
+      <div class="card" data-gpanel="anio"><div class="card-header"><span class="card-title">Anual</span><span class="badge">÷ 365</span></div><div class="card-body"><div class="cat-head"><span>Nombre del plan</span><span>Categoría</span><span>Valor</span><span></span></div><div id="cat-anio"></div><button class="add-row" data-act="catadd" data-g="anio"><svg class="ico"><use href="#i-plus"/></svg>Añadir plan anual</button></div></div>
+    </div>
+  </section>
+
+  <!-- FECHA FINAL DEL PLAN -->
+  <section class="section" id="sec-fecha_final">
+    <header class="page-head"><div><p class="page-eyebrow">Fechas</p><h1 class="page-title">Fecha final del plan</h1><p class="page-sub">Suma un año de 365 días a la fecha de inicio, luego los meses extra y por último los días extra.</p></div></header>
+    <div class="plan-layout">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Datos del plan</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button></div></div>
+        <div class="card-body">
+          <div class="fields-grid g2">
+            <div class="field span2"><label for="p-start">Fecha de inicio</label><input type="date" id="p-start" data-plan="start"><p class="hint"><strong>H</strong> pone hoy · <strong>+</strong> y <strong>−</strong> mueven un día</p></div>
+            <div class="field"><label for="p-years">Años de plan</label><div class="stepper"><button type="button" tabindex="-1" data-step="years" data-d="-1" aria-label="Restar año">−</button><input type="number" min="0" id="p-years" data-plan="years"><button type="button" tabindex="-1" data-step="years" data-d="1" aria-label="Sumar año">+</button></div><p class="hint">Cada año suma 365 días</p></div>
+            <div class="field"><label for="p-months">Meses extra</label><div class="stepper"><button type="button" tabindex="-1" data-step="months" data-d="-1" aria-label="Restar mes">−</button><input type="number" id="p-months" data-plan="months"><button type="button" tabindex="-1" data-step="months" data-d="1" aria-label="Sumar mes">+</button></div><p class="hint">Meses calendario</p></div>
+            <div class="field span2"><label for="p-days">Días extra</label><div class="stepper"><button type="button" tabindex="-1" data-step="days" data-d="-1" aria-label="Restar día">−</button><input type="number" id="p-days" data-plan="days"><button type="button" tabindex="-1" data-step="days" data-d="1" aria-label="Sumar día">+</button></div></div>
+          </div>
+          <div class="trail"><div class="trail-title">Cómo se llega a la fecha</div><ol id="trail"></ol></div>
+        </div>
+      </div>
+      <aside class="ticket" id="ticket" aria-live="polite">
+        <div class="ticket-head"><span>Fecha final</span><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div>
+        <div class="ticket-body"><div class="tk-week" id="tk-week"></div><div class="tk-day" id="tk-day"></div><div class="tk-month" id="tk-month"></div></div>
+        <div class="ticket-perf"></div>
+        <dl class="ticket-foot"><div><dt>Fecha + año</dt><dd id="tk-year"></dd></div><div><dt>Duración total</dt><dd id="tk-total"></dd></div></dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- DÍAS ENTRE FECHAS -->
+  <section class="section" id="sec-dias">
+    <header class="page-head"><div><p class="page-eyebrow">Fechas</p><h1 class="page-title">Días entre fechas</h1><p class="page-sub">Cuenta los días de cada periodo incluyendo el día de inicio y el día final.</p></div></header>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Periodos</span><div class="card-actions"><button class="btn btn-quiet btn-sm" data-act="reset">Limpiar <kbd>Alt R</kbd></button><button class="btn btn-secondary btn-sm" data-act="copy"><svg class="ico"><use href="#i-copy"/></svg>Copiar <kbd>Alt C</kbd></button></div></div>
+      <div class="card-body">
+        <div class="rows" id="rows-range"></div>
+        <button class="add-row" data-act="add"><svg class="ico"><use href="#i-plus"/></svg>Añadir periodo <kbd>Alt N</kbd></button>
+        <div class="calc-total sum"><span class="calc-total-label">Total de días en todos los periodos</span><span class="calc-total-value" id="total-range">—</span><button class="btn btn-secondary btn-sm" data-act="copytotal">Copiar valor</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALDO A FAVOR -->
+  <section class="section" id="sec-calc_saldo">
+    <header class="page-head"><div><p class="page-eyebrow">Otros cálculos</p><h1 class="page-title">Saldo a favor</h1><p class="page-sub">Plan Débito Mensual: calcula el saldo a favor y el valor a debitar.</p></div></header>
+    <div class="card" data-calc="saldo">
+      <div class="card-header"><span class="card-title">Plan Débito Mensual</span><span class="badge">Cálculo</span><div class="card-actions"><button class="btn btn-secondary btn-sm" data-act="copyhero"><svg class="ico"><use href="#i-copy"/></svg>Copiar valor</button><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="cs_valor">Valor total del plan ($)</label><input type="number" inputmode="numeric" id="cs_valor" placeholder="160000"><div class="field-below"><span class="plan-tag"></span><button type="button" class="pick" data-pick-for="cs_valor" data-group="mes" title="Elegir de la tabla de valores (Alt + P)">Elegir plan</button></div></div>
+          <div class="field"><label for="cs_dtotal">Total de días del período</label><input type="number" inputmode="numeric" id="cs_dtotal" placeholder="90"></div>
+          <div class="field"><label for="cs_dnov">Días de novedad</label><input type="number" inputmode="numeric" id="cs_dnov" placeholder="4"></div>
+        </div>
+        <div class="calc-result" id="cs_res" aria-live="polite">
+          <div class="calc-result-grid">
+            <div class="calc-stat"><div class="calc-stat-label">Valor del día</div><div class="calc-stat-value" id="cs_r1">—</div></div>
+            <div class="calc-stat"><div class="calc-stat-label">Saldo a favor</div><div class="calc-stat-value" id="cs_r2">—</div></div>
+            <div class="calc-stat hero"><div class="calc-stat-label">Valor a debitar</div><div class="calc-stat-value" id="cs_r3">—</div></div>
+          </div>
+        </div>
+        <p class="empty-note">Completa los tres campos para ver el resultado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.ª CONGELACIÓN -->
+  <section class="section" id="sec-calc_congel">
+    <header class="page-head"><div><p class="page-eyebrow">Otros cálculos</p><h1 class="page-title">3.ª congelación</h1><p class="page-sub">Plan Débito Mensual: calcula el valor a cobrar por la tercera congelación.</p></div></header>
+    <div class="card" data-calc="congel">
+      <div class="card-header"><span class="card-title">Plan Débito Mensual</span><span class="badge">Cálculo</span><div class="card-actions"><button class="btn btn-secondary btn-sm" data-act="copyhero"><svg class="ico"><use href="#i-copy"/></svg>Copiar valor</button><button class="btn btn-quiet btn-sm" data-act="clearcard" title="Limpiar (Alt + R)">Limpiar</button></div></div>
+      <div class="card-body">
+        <div class="fields-grid g3">
+          <div class="field"><label for="cc_valor">Valor total del plan ($)</label><input type="number" inputmode="numeric" id="cc_valor" placeholder="148000"><div class="field-below"><span class="plan-tag"></span><button type="button" class="pick" data-pick-for="cc_valor" data-group="mes" title="Elegir de la tabla de valores (Alt + P)">Elegir plan</button></div></div>
+          <div class="field"><label for="cc_mes">Días del mes</label><input type="number" inputmode="numeric" id="cc_mes" placeholder="30" value="30"></div>
+          <div class="field"><label for="cc_dias">Días de la novedad</label><input type="number" inputmode="numeric" id="cc_dias" placeholder="20"></div>
+        </div>
+        <div class="calc-result" id="cc_res" aria-live="polite">
+          <div class="calc-result-grid">
+            <div class="calc-stat"><div class="calc-stat-label">Valor del día</div><div class="calc-stat-value" id="cc_r1">—</div></div>
+            <div class="calc-stat"><div class="calc-stat-label">Valor novedad</div><div class="calc-stat-value" id="cc_r2">—</div></div>
+            <div class="calc-stat hero"><div class="calc-stat-label">A cobrar (25%)</div><div class="calc-stat-value" id="cc_r3">—</div></div>
+          </div>
+        </div>
+        <p class="empty-note">Completa el valor del plan y los días de la novedad para ver el resultado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESPUESTAS PQR -->
+  <section class="section" id="sec-pqr">
+    <header class="page-head"><div><p class="page-eyebrow">Respuestas</p><h1 class="page-title">Respuestas PQR</h1><p class="page-sub">Haz clic en el texto para editarlo antes de copiar. Los cambios no se guardan al recargar; usa <strong>Guardar en Plantillas</strong> para conservar una versión propia.</p></div></header>
+    <div class="list-toolbar">
+      <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="pqrSearch" placeholder="Buscar respuesta…" aria-label="Buscar respuesta" autocomplete="off" data-autofocus></label>
+      <span class="list-count" id="pqrCount"></span>
+    </div>
+    <div class="pqr-list" id="pqrList"></div>
+    <p class="no-results" id="pqrNone">Ninguna respuesta coincide con la búsqueda.</p>
+  </section>
+
+  <!-- PLANTILLAS -->
+  <section class="section" id="sec-plantillas">
+    <header class="page-head">
+      <div><p class="page-eyebrow">Respuestas</p><h1 class="page-title">Plantillas</h1><p class="page-sub">Crea, organiza y reutiliza tus propios textos. Se guardan en este navegador.</p></div>
+      <div class="page-actions">
+        <div class="menu-wrap">
+          <button class="icon-btn bordered" data-menu-toggle aria-controls="tplMenu" aria-expanded="false" aria-haspopup="menu" aria-label="Más opciones"><svg class="ico"><use href="#i-more"/></svg></button>
+          <div class="menu" id="tplMenu" role="menu">
+            <button class="menu-item" role="menuitem" data-tpl-menu="export"><svg class="ico"><use href="#i-download"/></svg>Exportar copia de seguridad</button>
+            <button class="menu-item" role="menuitem" data-tpl-menu="import"><svg class="ico"><use href="#i-upload"/></svg>Importar plantillas</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" data-tpl-new><svg class="ico"><use href="#i-plus"/></svg>Nueva plantilla <kbd>Alt N</kbd></button>
+      </div>
+    </header>
+
+    <div id="tplBrowse">
+      <div class="tpl-toolbar">
+        <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="tplSearch" placeholder="Buscar por nombre o contenido…" aria-label="Buscar plantillas" autocomplete="off" data-autofocus></label>
+        <label class="select-field"><svg class="ico" aria-hidden="true"><use href="#i-sort"/></svg>
+          <select id="tplSort" aria-label="Ordenar plantillas">
+            <option value="recent">Editadas recientemente</option>
+            <option value="name">Nombre (A–Z)</option>
+            <option value="uses">Más usadas</option>
+            <option value="oldest">Más antiguas</option>
+          </select>
+        </label>
+        <span class="tpl-count" id="tplCount" aria-live="polite"></span>
+      </div>
+      <div class="tpl-filters" id="tplFilters" role="group" aria-label="Filtrar plantillas"></div>
+      <div class="tpl-grid" id="tplGrid"></div>
+      <div class="empty-state" id="tplNoResults" hidden>
+        <div class="empty-icon"><svg class="ico"><use href="#i-search"/></svg></div>
+        <h3>Sin resultados</h3>
+        <p>Ninguna plantilla coincide con la búsqueda o el filtro seleccionado.</p>
+        <div class="empty-actions"><button class="btn btn-secondary" data-tpl-clear>Limpiar filtros</button></div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="tplEmpty" hidden>
+      <div class="empty-icon"><svg class="ico"><use href="#i-template"/></svg></div>
+      <h3>Aún no tienes plantillas</h3>
+      <p>Guarda los textos que usas a diario y cópialos con un clic. También puedes guardar cualquier respuesta PQR como plantilla.</p>
+      <div class="empty-actions">
+        <button class="btn btn-primary" data-tpl-new><svg class="ico"><use href="#i-plus"/></svg>Crear la primera</button>
+        <button class="btn btn-secondary" data-tpl-menu="import"><svg class="ico"><use href="#i-upload"/></svg>Importar</button>
+      </div>
+    </div>
+    <input type="file" id="tplImport" accept="application/json,.json" hidden>
+  </section>
+
+</div>
+</main>
+
+<!-- ═══════════ Overlays ═══════════ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="picker" aria-labelledby="pk-title">
+  <div class="dlg-head"><h2 id="pk-title">Elegir plan</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+  <div class="dlg-body">
+    <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input id="pk-q" type="search" placeholder="Buscar categoría" aria-label="Buscar categoría" autocomplete="off"></label>
+    <div class="segmented pk-groups" id="pk-groups" role="group" aria-label="Tipo de plan">
+      <button type="button" class="seg" data-g="mes">Mensual</button><button type="button" class="seg" data-g="tri">Trimestral</button><button type="button" class="seg" data-g="anio">Anual</button>
+    </div>
+    <div class="pk-names" id="pk-names" role="group" aria-label="Nombre del plan"></div>
+    <div class="pk-list" id="pk-list" role="listbox"></div>
+    <p class="pk-hint" id="pk-hint">↑ ↓ moverse · ← → cambiar plan · Enter elegir</p>
+  </div>
+</dialog>
+
+<dialog id="help" aria-labelledby="help-title">
+  <div class="dlg-head"><h2 id="help-title">Atajos de teclado</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+  <div class="dlg-body">
+    <h3>Moverse</h3>
+    <div class="sc"><span>Buscar herramienta (Enter abre la primera)</span><span class="keys"><kbd>/</kbd> · <kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+    <div class="sc"><span>Ir a las herramientas numeradas del menú</span><span class="keys"><kbd>Alt</kbd><kbd>1</kbd>–<kbd>9</kbd></span></div>
+    <div class="sc"><span>Herramienta anterior o siguiente</span><span class="keys"><kbd>Alt</kbd><kbd>↑</kbd><kbd>↓</kbd></span></div>
+    <div class="sc"><span>Siguiente campo / campo anterior</span><span class="keys"><kbd>Enter</kbd> · <kbd>Shift</kbd><kbd>Enter</kbd></span></div>
+    <h3>En cualquier campo de fecha</h3>
+    <div class="sc"><span>Poner la fecha de hoy</span><span class="keys"><kbd>H</kbd></span></div>
+    <div class="sc"><span>Sumar o restar un día</span><span class="keys"><kbd>+</kbd><kbd>−</kbd></span></div>
+    <div class="sc"><span>Sumar o restar un mes</span><span class="keys"><kbd>Shift</kbd><kbd>+</kbd><kbd>−</kbd></span></div>
+    <h3>Acciones</h3>
+    <div class="sc"><span>Copiar el texto o resultado de la tarjeta actual</span><span class="keys"><kbd>Alt</kbd><kbd>C</kbd></span></div>
+    <div class="sc"><span>Limpiar la tarjeta actual</span><span class="keys"><kbd>Alt</kbd><kbd>R</kbd></span></div>
+    <div class="sc"><span>Elegir plan de la tabla de valores</span><span class="keys"><kbd>Alt</kbd><kbd>P</kbd></span></div>
+    <div class="sc"><span>Añadir fila · Nueva plantilla</span><span class="keys"><kbd>Alt</kbd><kbd>N</kbd></span></div>
+    <div class="sc"><span>Eliminar la fila actual</span><span class="keys"><kbd>Alt</kbd><kbd>Supr</kbd></span></div>
+    <div class="sc"><span>Guardar plantilla en el editor</span><span class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></span></div>
+    <div class="sc"><span>Cambiar tema claro u oscuro</span><span class="keys"><kbd>Alt</kbd><kbd>T</kbd></span></div>
+    <div class="sc"><span>Mostrar esta ayuda</span><span class="keys"><kbd>?</kbd></span></div>
+  </div>
+</dialog>
+
+<dialog id="tplDialog" class="dlg-lg" aria-labelledby="tplDlgTitle">
+  <form id="tplForm" class="tpl-form" novalidate>
+    <div class="dlg-head"><h2 id="tplDlgTitle">Nueva plantilla</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="field">
+        <label for="tplName">Nombre</label>
+        <input id="tplName" maxlength="80" autocomplete="off" placeholder="Ej. Cierre por documentación incompleta" aria-describedby="tplNameErr">
+        <p class="field-error" id="tplNameErr"></p>
+      </div>
+      <div class="field">
+        <label for="tplCat">Categoría <span class="label-opt">Opcional</span></label>
+        <input id="tplCat" maxlength="40" autocomplete="off" list="tplCatList" placeholder="Ej. Cierre PQR">
+        <datalist id="tplCatList"></datalist>
+        <div class="cat-suggest" id="tplCatSuggest"></div>
+      </div>
+      <div class="field">
+        <label for="tplContent">Contenido</label>
+        <textarea id="tplContent" rows="8" placeholder="Escribe el texto de la plantilla…" aria-describedby="tplContentErr tplTip"></textarea>
+        <div class="field-foot"><p class="field-error" id="tplContentErr"></p><span class="char-count" id="tplChars">0 caracteres</span></div>
+        <p class="tpl-tip" id="tplTip">Consejo: marca los datos que cambian con corchetes, por ejemplo <code>[NOMBRE]</code> o <code>[DOC]</code>.</p>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <span class="dlg-hint"><kbd>Ctrl</kbd><kbd>Enter</kbd> para guardar</span>
+      <button type="button" class="btn btn-secondary" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="tplSave">Crear plantilla</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="confirmDlg" class="dlg-sm" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
+  <div class="confirm-body">
+    <div class="confirm-icon"><svg class="ico"><use href="#i-alert"/></svg></div>
+    <h2 id="confirmTitle"></h2>
+    <p id="confirmMsg"></p>
+  </div>
+  <div class="dlg-foot">
+    <button type="button" class="btn btn-secondary" id="confirmCancel" data-close>Cancelar</button>
+    <button type="button" class="btn btn-danger" id="confirmOk">Confirmar</button>
+  </div>
+</dialog>
+
+<script>
+'use strict';
+/* ═══════════ Shared utilities: DOM, dates (UTC), formatting, storage ═══════════ */
+
+const MS = 86400000;
+const $ = (q, r = document) => r.querySelector(q);
+const $$ = (q, r = document) => [...r.querySelectorAll(q)];
+
+/* Dates are handled as UTC timestamps to avoid timezone drift. */
+const parseD = x => { if (!x) return null; const [y, m, d] = String(x).split('-').map(Number); return (y && m && d) ? Date.UTC(y, m - 1, d) : null; };
+const isoD = t => new Date(t).toISOString().slice(0, 10);
+const todayD = () => { const n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); };
+const edate = (t, n) => { const d = new Date(t); const y = d.getUTCFullYear(), m = d.getUTCMonth() + n, day = d.getUTCDate(); const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(); return Date.UTC(y, m, Math.min(day, last)); };
+const daysBetween = (a, b) => Math.round((b - a) / MS);
+const fDate = t => { const d = new Date(t); return String(d.getUTCDate()).padStart(2, '0') + '/' + String(d.getUTCMonth() + 1).padStart(2, '0') + '/' + d.getUTCFullYear(); };
+const fPart = (t, o) => new Intl.DateTimeFormat('es-CO', Object.assign({ timeZone: 'UTC' }, o)).format(t);
+
+const num = n => Math.round(n).toLocaleString('es-CO');
+const pesos = n => { n = Math.round(n); return (n < 0 ? '-' : '') + '$ ' + Math.abs(n).toLocaleString('es-CO'); };
+const plural = (n, w) => `${num(n)} ${w}${Math.abs(n) === 1 ? '' : (w === 'mes' ? 'es' : 's')}`;
+const parseMoney = x => { const n = Number(String(x).replace(/[^\d-]/g, '')); return isFinite(n) ? n : 0; };
+
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/** Lowercase and strip accents, for accent-insensitive search. */
+const norm = t => String(t ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+/** Escapes `text` and wraps every accent-insensitive match of `q` (already normalized) in <mark>. */
+function highlight(text, q) {
+  text = String(text ?? '');
+  if (!q) return esc(text);
+  let flat = '';
+  const map = [];
+  for (let i = 0; i < text.length; i++) for (const ch of norm(text[i])) { flat += ch; map.push(i); }
+  let out = '', last = 0, from = 0, idx;
+  while ((idx = flat.indexOf(q, from)) !== -1) {
+    const start = map[idx], end = map[idx + q.length - 1] + 1;
+    if (start >= last) { out += esc(text.slice(last, start)) + '<mark>' + esc(text.slice(start, end)) + '</mark>'; last = end; }
+    from = idx + q.length;
+  }
+  return out + esc(text.slice(last));
+}
+
+const icon = name => `<svg class="ico" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+const RTF = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+/** "hace 3 días", "ayer", "ahora mismo"… */
+function relTime(ts) {
+  const s = (ts - Date.now()) / 1000, abs = Math.abs(s);
+  if (abs < 45) return 'ahora mismo';
+  const units = [['minute', 60], ['hour', 3600], ['day', 86400], ['week', 604800], ['month', 2629800], ['year', 31557600]];
+  let unit = 'minute', size = 60;
+  for (const [u, sec] of units) if (abs >= sec) { unit = u; size = sec; }
+  return RTF.format(Math.round(s / size), unit);
+}
+
+/** localStorage wrapper that never throws (private mode, blocked storage…). */
+const store = {
+  get(k, fallback) { try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  getRaw(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  setRaw(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+};
+</script>
+<script>
+'use strict';
+/* ═══════════ Shared UI: toast, clipboard, dialogs, confirmation, theme, menus ═══════════ */
+
+/* ── Toast ── */
+const TOAST_ICONS = { success: 'check', info: 'info', error: 'alert' };
+function toast(msg, kind = 'success') {
+  const t = $('#toast');
+  t.dataset.kind = kind;
+  t.innerHTML = icon(TOAST_ICONS[kind] || 'info') + `<span>${esc(msg)}</span>`;
+  t.classList.remove('show');
+  void t.offsetWidth; // restart the entrance transition on rapid toasts
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ── Clipboard ── */
+function fallbackCopy(txt) {
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { /* ignore */ }
+  ta.remove();
+  return ok;
+}
+function writeClip(txt) {
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(txt).catch(() => { if (!fallbackCopy(txt)) throw new Error('copy'); });
+  return fallbackCopy(txt) ? Promise.resolve() : Promise.reject(new Error('copy'));
+}
+/** Briefly turns a button into a "Copiado" confirmation. */
+function flash(btn) {
+  if (!btn) return;
+  if (!btn.dataset.html) btn.dataset.html = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = icon('check') + '<span>Copiado</span>';
+  clearTimeout(btn._t);
+  btn._t = setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = btn.dataset.html; }, 1600);
+}
+function copyText(txt, btn, msg) {
+  return writeClip(txt).then(() => { flash(btn); toast(msg || 'Copiado'); return true; }, () => { toast('No se pudo copiar', 'error'); return false; });
+}
+
+/* ── Dialogs (animated open/close on top of <dialog>) ── */
+const CLOSE_MS = 190;
+const isClosing = d => d.classList.contains('is-closing');
+
+function openDialog(d) {
+  if (d.open) return;
+  d.returnValue = '';
+  d.classList.remove('is-closing');
+  d.showModal();
+}
+function closeDialog(d, value) {
+  if (!d.open) return Promise.resolve();
+  if (d._closing) return d._closing;
+  const finish = () => {
+    d.classList.remove('is-closing');
+    d._closing = null;
+    if (d.open) value === undefined ? d.close() : d.close(value);
+  };
+  if (reducedMotion()) { finish(); return Promise.resolve(); }
+  d.classList.add('is-closing');
+  d._closing = new Promise(res => setTimeout(() => { finish(); res(); }, CLOSE_MS));
+  return d._closing;
+}
+/** Dialogs may register `_onRequestClose` to intercept closing (e.g. unsaved changes). */
+function requestClose(d) { return d._onRequestClose ? d._onRequestClose() : closeDialog(d); }
+
+// Esc → animated close (the native `cancel` event does not bubble, so listen in capture).
+document.addEventListener('cancel', e => {
+  if (e.target.tagName !== 'DIALOG') return;
+  e.preventDefault();
+  requestClose(e.target);
+}, true);
+
+// [data-close] buttons and clicks on the backdrop (the <dialog> element itself).
+let pointerDownTarget = null;
+document.addEventListener('pointerdown', e => { pointerDownTarget = e.target; }, true);
+document.addEventListener('click', e => {
+  const closer = e.target.closest('[data-close]');
+  if (closer) { const d = closer.closest('dialog'); if (d) requestClose(d); return; }
+  if (e.target.tagName === 'DIALOG' && e.target.open && pointerDownTarget === e.target) requestClose(e.target);
+});
+
+/* ── Confirmation dialog ── */
+function confirmDialog({ title, message = '', confirmLabel = 'Confirmar', cancelLabel = 'Cancelar', tone = 'danger' }) {
+  const d = $('#confirmDlg'), ok = $('#confirmOk');
+  $('#confirmTitle').textContent = title;
+  $('#confirmMsg').textContent = message;
+  $('#confirmMsg').hidden = !message;
+  $('#confirmCancel').textContent = cancelLabel;
+  ok.textContent = confirmLabel;
+  ok.className = 'btn ' + (tone === 'danger' ? 'btn-danger' : 'btn-primary');
+  d.dataset.tone = tone;
+  openDialog(d);
+  $('#confirmCancel').focus(); // safest default for destructive actions
+  return new Promise(res => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+}
+$('#confirmOk').addEventListener('click', () => closeDialog($('#confirmDlg'), 'ok'));
+
+/* ── Theme ── */
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  $$('[data-theme-label]').forEach(el => { el.textContent = t === 'light' ? 'Oscuro' : 'Claro'; });
+  $$('[data-theme-icon]').forEach(u => u.setAttribute('href', t === 'light' ? '#i-moon' : '#i-sun'));
+  const meta = $('meta[name="theme-color"]');
+  if (meta) meta.content = t === 'light' ? '#F6F6F4' : '#0E0E10';
+  store.setRaw('mybt-theme', t);
+}
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  setTheme(next);
+  toast(next === 'light' ? 'Tema claro' : 'Tema oscuro', 'info');
+}
+
+/* ── Dropdown menus ── */
+const Menus = {
+  toggleOf: m => $(`[aria-controls="${m.id}"]`),
+  close(m) { m.classList.remove('open'); const b = Menus.toggleOf(m); if (b) b.setAttribute('aria-expanded', 'false'); },
+  closeAll() { $$('.menu.open').forEach(Menus.close); },
+  toggle(btn) {
+    const m = document.getElementById(btn.getAttribute('aria-controls'));
+    const opening = !m.classList.contains('open');
+    Menus.closeAll();
+    if (!opening) return;
+    m.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    const first = $('.menu-item', m);
+    if (first) first.focus({ preventScroll: true });
+  },
+  keys(e) {
+    const m = $('.menu.open'); if (!m) return false;
+    if (e.key === 'Escape') { e.preventDefault(); Menus.close(m); Menus.toggleOf(m)?.focus(); return true; }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const items = $$('.menu-item', m), i = items.indexOf(document.activeElement);
+      items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
+      return true;
+    }
+    if (e.key === 'Tab') Menus.close(m);
+    return false;
+  }
+};
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-menu-toggle]');
+  if (t) { Menus.toggle(t); return; }
+  if (!e.target.closest('.menu') || e.target.closest('.menu-item')) Menus.closeAll();
+});
+</script>
+<script>
+'use strict';
+/* ═══════════ Text generators (novedades) and simple calculators ═══════════
+   Cards declare `data-gen="cN"` or `data-calc="name"`; any input inside them
+   re-runs the matching function (see the listener at the bottom). */
+
+const EMPTY_OUT = '<em>Completa los campos para generar el texto…</em>';
+const val = id => document.getElementById(id).value.trim();
+const fmt = d => { const t = parseD(d); return t === null ? '[fecha]' : fDate(t); };
+/** Days between two ISO dates, counting both ends. */
+const diffIncl = (a, b) => { const x = parseD(a), y = parseD(b); return (x === null || y === null) ? null : daysBetween(x, y) + 1; };
+const addDays = (ds, n) => { const t = parseD(ds); return (t === null || n === null) ? '[fecha nueva]' : fDate(t + n * MS); };
+
+/** Shared logic for the "novedad" cards: start, end, current cut-off date and PQR. */
+function novedad(p, render) {
+  const ini = val(p + '_ini'), fin = val(p + '_fin'), co = val(p + '_corte'), pqr = esc(val(p + '_pqr'));
+  if (!ini && !fin && !co) return null;
+  const d = diffIncl(ini, fin) ?? '[X]';
+  const nf = addDays(co, typeof d === 'number' ? d : 0);
+  return render({ ini: fmt(ini), fin: fmt(fin), co: fmt(co), pqr, d, nf });
+}
+
+const GENERATORS = {
+  c5: () => novedad('c5', x => `Se aplica novedad de incapacidad médica desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; la fecha fin del servicio actualmente es <strong>${x.co}</strong>. La nueva fecha fin es <strong>${x.nf}</strong> por un total de <strong>${x.d} días</strong>${x.pqr ? ` //(BD) PQR ${x.pqr}` : ' //(BD)'}.`),
+  c6: () => novedad('c6', x => `Se aplica novedad de incapacidad médica desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; fecha de corte actual <strong>${x.co}</strong>. Total de días: <strong>${x.d}</strong>. Nueva fecha de corte: <strong>${x.nf}</strong>${x.pqr ? ` //(BD) PQR ${x.pqr}` : ' //(BD)'}.`),
+  c7: () => novedad('c7', x => `Se aplica novedad de congelación desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; fecha fin del servicio actualmente <strong>${x.co}</strong>. Total de días: <strong>${x.d}</strong>. Nueva fecha fin: <strong>${x.nf}</strong>${x.pqr ? `. Bajo la PQR ${x.pqr} //(BD)` : ' //(BD)'}.`),
+  c8: () => novedad('c8', x => `Se aplica novedad de congelación desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; fecha de corte actual <strong>${x.co}</strong>. Total de días: <strong>${x.d}</strong>. Nueva fecha de corte: <strong>${x.nf}</strong>${x.pqr ? `. Bajo la PQR ${x.pqr} //(BD)` : ' //(BD)'}.`),
+  c9: () => novedad('c9', x => `Se aplica novedad de congelación retroactiva desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; fecha fin del servicio actualmente <strong>${x.co}</strong>. Total de días: <strong>${x.d}</strong>. Nueva fecha fin: <strong>${x.nf}</strong> //(YB)${x.pqr ? ` PQR ${x.pqr}` : ''}.`),
+  c10: () => novedad('c10', x => `Se aplica novedad de congelación retroactiva desde el <strong>${x.ini}</strong> hasta <strong>${x.fin}</strong>; fecha de corte actual <strong>${x.co}</strong>. Total de días: <strong>${x.d}</strong>. Nueva fecha de corte: <strong>${x.nf}</strong> SAB${x.pqr ? ` PQR ${x.pqr}` : ''}.`),
+  c11: () => {
+    const a = val('c11_actual'), n = val('c11_nueva'), pqr = esc(val('c11_pqr'));
+    if (!a && !n) return null;
+    return `Se realiza cambio de fecha de inicio del plan por motivo error de digitación en sede; fecha inicio actual <strong>${fmt(a)}</strong>, nueva fecha inicio para el <strong>${fmt(n)}</strong>${pqr ? ` bajo la PQR ${pqr}` : ''}.`;
+  }
+};
+
+function generate(id) {
+  const html = GENERATORS[id]();
+  const out = document.getElementById(id + '_out');
+  out.innerHTML = html ?? EMPTY_OUT;
+  out.closest('.output-wrap').classList.toggle('is-empty', !html);
+}
+
+/** Copies the generated text of the card that holds `btn`. */
+function copyOutput(btn) {
+  const out = $('.output-text', btn.closest('.output-wrap'));
+  if (!out || out.querySelector('em')) { toast('Primero llena los campos', 'info'); return; }
+  copyText(out.innerText.trim(), btn, 'Texto copiado');
+}
+
+/* ── Simple calculators ── */
+const numVal = id => parseFloat(document.getElementById(id).value);
+function showResult(resId, values) {
+  const r = document.getElementById(resId);
+  if (!values) { r.classList.remove('visible'); return; }
+  r.classList.add('visible');
+  Object.entries(values).forEach(([id, text]) => { document.getElementById(id).textContent = text; });
+}
+
+const CALCS = {
+  saldo() {
+    const v1 = numVal('cs_valor'), dt = numVal('cs_dtotal'), dn = numVal('cs_dnov');
+    if (!v1 || !dt || !dn) return showResult('cs_res', null);
+    const dia = v1 / dt;
+    showResult('cs_res', { cs_r1: pesos(dia) + '/día', cs_r2: pesos(dia * dn), cs_r3: pesos(v1 - dia * dn) });
+  },
+  congel() {
+    const v1 = numVal('cc_valor'), m = numVal('cc_mes') || 30, d = numVal('cc_dias');
+    if (!v1 || !d) return showResult('cc_res', null);
+    const dia = v1 / m, nov = dia * d;
+    showResult('cc_res', { cc_r1: pesos(dia) + '/día', cc_r2: pesos(nov), cc_r3: pesos(nov * 0.25) });
+  }
+};
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (!t.closest) return;
+  const gen = t.closest('[data-gen]');
+  if (gen) generate(gen.dataset.gen);
+  const calc = t.closest('[data-calc]');
+  if (calc) CALCS[calc.dataset.calc]();
+});
+</script>
+<script>
+'use strict';
+/* ═══════════ Navigation: sections, sidebar search, mobile drawer ═══════════ */
+
+const DEFAULT_SEC = 'incap';
+const TITLES = {};
+$$('.nav-item').forEach(b => { TITLES[b.dataset.sec] = b.title = $('.nav-text', b).textContent.trim(); });
+
+const curSec = () => { const a = $('.section.active'); return a ? a.id.slice(4) : null; };
+const visibleNavItems = () => $$('.nav-item').filter(b => !b.hidden && !b.closest('.nav-group').hidden);
+const navOrder = () => visibleNavItems().map(b => b.dataset.sec);
+
+function goTo(id, focus) {
+  const sec = document.getElementById('sec-' + id);
+  if (!sec) return;
+  const prev = $('.section.active');
+  if (prev !== sec) {
+    if (prev) prev.classList.remove('active');
+    sec.classList.add('active');
+    document.dispatchEvent(new CustomEvent('sectionchange', { detail: id }));
+  }
+  $$('.nav-item').forEach(b => {
+    const on = b.dataset.sec === id;
+    b.classList.toggle('active', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  $('#topbarTitle').textContent = TITLES[id] || '';
+  document.title = `${TITLES[id] || 'Herramientas'} · MYBT`;
+  closeNav();
+  if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+  window.scrollTo({ top: 0 });
+  store.setRaw('mybt-last', id);
+  if (focus) {
+    const f = sec.querySelector('[data-autofocus], input:not([type=search]), select');
+    if (f) f.focus({ preventScroll: true });
+  }
+}
+
+/* ── Mobile drawer ── */
+function setNav(open) {
+  document.body.classList.toggle('nav-open', open);
+  $('#menuBtn').setAttribute('aria-expanded', String(open));
+}
+const openNav = () => setNav(true);
+const closeNav = () => { if (document.body.classList.contains('nav-open')) setNav(false); };
+$('#menuBtn').addEventListener('click', () => setNav(!document.body.classList.contains('nav-open')));
+$('#scrim').addEventListener('click', closeNav);
+
+/* ── Sidebar search & keyboard ── */
+function filtrarNav() {
+  const q = norm($('#navSearch').value);
+  let total = 0;
+  $$('.nav-group').forEach(g => {
+    let n = 0;
+    const groupHit = norm($('.nav-label', g).textContent).includes(q);
+    $$('.nav-item', g).forEach(b => { const ok = !q || groupHit || norm($('.nav-text', b).textContent).includes(q); b.hidden = !ok; if (ok) n++; });
+    g.hidden = n === 0;
+    total += n;
+  });
+  $('#navEmpty').style.display = total ? 'none' : 'block';
+}
+
+/** Shows Alt+1…9 hints on the first nine visible tools. */
+function numberNav() {
+  $$('.nav-kbd').forEach(k => k.remove());
+  navOrder().slice(0, 9).forEach((id, i) => {
+    const k = document.createElement('kbd');
+    k.className = 'nav-kbd'; k.textContent = i + 1; k.title = 'Alt + ' + (i + 1);
+    $(`.nav-item[data-sec="${id}"]`).appendChild(k);
+  });
+}
+
+$('#nav').addEventListener('click', e => { const b = e.target.closest('.nav-item'); if (b) goTo(b.dataset.sec); });
+$('#navSearch').addEventListener('input', () => { filtrarNav(); numberNav(); });
+$('#navSearch').addEventListener('keydown', e => {
+  const input = e.target;
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const first = navOrder()[0];
+    if (first) { input.value = ''; filtrarNav(); numberNav(); input.blur(); goTo(first, true); }
+  }
+  if (e.key === 'ArrowDown') { e.preventDefault(); const f = visibleNavItems()[0]; if (f) f.focus(); }
+  if (e.key === 'Escape') { input.value = ''; filtrarNav(); numberNav(); input.blur(); }
+});
+$('#nav').addEventListener('keydown', e => {
+  if (!e.target.classList.contains('nav-item') || (e.key !== 'ArrowDown' && e.key !== 'ArrowUp')) return;
+  e.preventDefault();
+  const items = visibleNavItems(), i = items.indexOf(e.target);
+  const next = items[i + (e.key === 'ArrowDown' ? 1 : -1)];
+  if (next) next.focus(); else if (e.key === 'ArrowUp') $('#navSearch').focus();
+});
+
+function focusNavSearch() {
+  if (window.innerWidth <= 900) openNav();
+  $('#navSearch').focus();
+  $('#navSearch').select();
+}
+</script>
+<script>
+'use strict';
+/* ═══════════ Calculators with persisted state:
+   plan end date, days between dates, plan-change prorations, price table and plan picker ═══════════ */
+
+const GROUPS = { mes: 'Mensual', tri: 'Trimestral', anio: 'Anual' };
+const BASE = { mes: 30, tri: 30, anio: 365 };
+const DIV = { mes: 1, tri: 3, anio: 1 };
+const CATEGORIAS = ['PLATINO', 'ONE PLUS', 'ONE', 'PREMIUM', 'CLASSIC', 'SUPER'];
+const seed = map => Object.entries(map).flatMap(([y, vals]) => CATEGORIAS.map((c, i) => ({ y, c, v: vals[i] || 0 })));
+const CAT_VERSION = 3;
+const DEFAULTS = {
+  plan: { start: '', years: 1, months: 0, days: 0 },
+  range: [{ a: '', b: '' }],
+  mes: [{ a: '', b: '', v1: 0, v2: 0 }],
+  tri: [{ a: '', b: '', v1: 0, v2: 0 }],
+  anio: [{ a: '', b: '', v1: 0, v2: 0 }],
+  cat: {
+    // Ayudaventas julio 2026 · orden: PLATINO, ONE PLUS, ONE, PREMIUM, CLASSIC, SUPER
+    mes: seed({
+      'Débito Estudiante':      [276250, 199750, 165750, 148750, 131750, 114750],
+      'Débito Naranja':         [227500, 164500, 136500, 122500, 108500, 94500],
+      'Débito con Permanencia': [325000, 235000, 195000, 175000, 155000, 135000],
+      'Débito sin Permanencia': [405000, 295000, 245000, 220000, 195000, 170000]
+    }),
+    tri: seed({
+      'Trimestre con Permanencia': [877500, 634500, 526500, 472500, 418500, 364500],
+      'Trimestre sin Permanencia': [1093500, 796500, 661500, 594000, 526500, 459000]
+    }),
+    anio: seed({
+      'Año Renovado':     [2925000, 2115000, 1755000, 1575000, 1395000, 1215000],
+      'Año Estudiante':   [2765000, 2000000, 1660000, 1490000, 1320000, 1150000],
+      'Año Hora Naranja': [2275000, 1645000, 1365000, 1225000, 1085000, 945000]
+    })
+  }
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+
+let S = clone(DEFAULTS);
+{
+  const saved = store.get('mybt-calc', null);
+  if (saved && saved.plan) {
+    S = Object.assign(clone(DEFAULTS), saved);
+    if (saved.catV !== CAT_VERSION) S.cat = clone(DEFAULTS.cat);
+  }
+  S.catV = CAT_VERSION;
+}
+const save = () => store.set('mybt-calc', S);
+const SEC2KEY = { fecha_final: 'plan', dias: 'range', calc_mes: 'mes', calc_tri: 'tri', calc_anio: 'anio', valores: 'cat' };
+
+/* ── Fecha final del plan ── */
+function fillPlan() { $('#p-start').value = S.plan.start; $('#p-years').value = S.plan.years; $('#p-months').value = S.plan.months; $('#p-days').value = S.plan.days; }
+let lastFinal = null;
+function calcPlan() {
+  const p = S.plan, start = parseD(p.start), tk = $('#ticket');
+  if (start === null) {
+    tk.classList.add('empty'); lastFinal = null;
+    $('#tk-week').textContent = ''; $('#tk-day').textContent = '—'; $('#tk-month').textContent = 'Escribe la fecha de inicio';
+    $('#tk-year').textContent = '—'; $('#tk-total').textContent = '—';
+    $('#trail').innerHTML = '<li><span class="what">Falta la fecha de inicio<em>Pulsa H en el campo para poner hoy</em></span><span></span></li>';
+    return null;
+  }
+  tk.classList.remove('empty');
+  const y = Number(p.years) || 0, m = Number(p.months) || 0, d = Number(p.days) || 0;
+  const plusYear = start + 365 * y * MS, plusMonths = edate(plusYear, m), final = plusMonths + d * MS;
+  $('#tk-week').textContent = fPart(final, { weekday: 'long' });
+  const dayEl = $('#tk-day');
+  dayEl.textContent = fPart(final, { day: 'numeric' });
+  if (lastFinal !== null && lastFinal !== final) { dayEl.classList.remove('pop'); void dayEl.offsetWidth; dayEl.classList.add('pop'); }
+  lastFinal = final;
+  const mt = fPart(final, { month: 'long', year: 'numeric' });
+  $('#tk-month').textContent = mt.charAt(0).toUpperCase() + mt.slice(1);
+  $('#tk-year').textContent = fDate(plusYear);
+  $('#tk-total').textContent = plural(daysBetween(start, final), 'día');
+  const step = (what, sub, when) => `<li><span class="what">${what}<em>${sub}</em></span><span class="when">${fDate(when)}</span></li>`;
+  $('#trail').innerHTML =
+    step('Inicio del plan', fPart(start, { weekday: 'long' }), start) +
+    step(`+ ${plural(365 * y, 'día')}`, y === 1 ? 'Un año de plan' : plural(y, 'año') + ' de plan', plusYear) +
+    step(`+ ${plural(m, 'mes')}`, 'Meses extra', plusMonths) +
+    step(`+ ${plural(d, 'día')}`, 'Días extra · fecha final', final);
+  return final;
+}
+$$('[data-plan]').forEach(inp => inp.addEventListener('input', () => {
+  const k = inp.dataset.plan;
+  S.plan[k] = k === 'start' ? inp.value : (inp.value === '' ? 0 : Number(inp.value));
+  save(); calcPlan();
+}));
+$$('[data-step]').forEach(b => b.addEventListener('click', () => {
+  const k = b.dataset.step, inp = $('#p-' + k);
+  let n = (Number(inp.value) || 0) + Number(b.dataset.d);
+  if (k === 'years' && n < 0) n = 0;
+  inp.value = n;
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+}));
+
+/* ── Filas (días entre fechas y prorrateos) ── */
+let rowUid = 0;
+function rowHTML(key, r, i) {
+  const id = 'r' + (rowUid++);
+  const dateF = (f, label, cls) => `<div class="field ${cls}"><label for="${id}${f}">${label}</label><input type="date" id="${id}${f}" data-f="${f}" value="${r[f] || ''}"></div>`;
+  const moneyF = (f, label) => `<div class="field"><label for="${id}${f}">${label}</label><input type="text" inputmode="numeric" id="${id}${f}" data-f="${f}" data-money value="${r[f] ? pesos(r[f]) : ''}" placeholder="$ 0"><div class="field-below"><span class="plan-tag" data-tag="${f}">${esc(r['p' + f] || '')}</span><button type="button" class="pick" data-act="pick" data-f="${f}" title="Elegir de la tabla de valores (Alt + P)">Elegir plan</button></div></div>`;
+  const del = `<button class="del" data-act="del" aria-label="Eliminar fila ${i + 1}" title="Eliminar (Alt + Supr)">${icon('trash')}</button>`;
+  if (key === 'range') return `<div class="row row-range" data-i="${i}">${dateF('a', 'Desde', 'f-a')}${dateF('b', 'Hasta', 'f-b')}<div class="out"><b data-o="days">—</b><small>días</small></div>${del}<p class="warn" data-o="warn"></p></div>`;
+  return `<div class="row row-pro" data-i="${i}">${dateF('a', 'Inicio novedad', 'f-a')}${dateF('b', 'Fin vigencia', 'f-b')}${moneyF('v1', 'Valor plan actual')}${moneyF('v2', 'Valor plan nuevo')}<div class="out"><b data-o="total">—</b><small>a cobrar</small></div>${del}<p class="warn" data-o="warn"></p><div class="breakdown" data-o="bd"></div></div>`;
+}
+function renderRows(key) {
+  const box = $('#rows-' + key);
+  box.innerHTML = S[key].length ? S[key].map((r, i) => rowHTML(key, r, i)).join('') : '<div class="rows-empty">No hay periodos. Añade uno con el botón de abajo o con Alt + N.</div>';
+  calcRows(key);
+}
+function rowCalc(key, r) {
+  const a = parseD(r.a), b = parseD(r.b);
+  if (a === null || b === null) return null;
+  if (key === 'range') return { a, b, days: daysBetween(a, b) + 1 };
+  const dv = DIV[key], base = BASE[key], m1 = (r.v1 || 0) / dv, m2 = (r.v2 || 0) / dv, days = daysBetween(a, b);
+  const d1 = m1 / base, d2 = m2 / base, dd = d2 - d1;
+  return { a, b, days, m1, m2, d1, d2, dd, t: dd * days };
+}
+function calcRows(key) {
+  let total = 0;
+  $$('#rows-' + key + ' .row').forEach(el => {
+    const r = S[key][el.dataset.i], c = rowCalc(key, r);
+    $('[data-o="warn"]', el).textContent = (c && c.b < c.a) ? 'La fecha final es anterior a la inicial.' : '';
+    if (key === 'range') {
+      const o = $('[data-o="days"]', el);
+      if (!c) { o.textContent = '—'; return; }
+      total += c.days; o.textContent = num(c.days); el.classList.toggle('neg', c.days < 0);
+      return;
+    }
+    const o = $('[data-o="total"]', el), bd = $('[data-o="bd"]', el);
+    if (!c) { o.textContent = '—'; bd.innerHTML = 'Completa las dos fechas para calcular.'; el.classList.remove('neg'); return; }
+    total += c.t; o.textContent = pesos(c.t); el.classList.toggle('neg', c.t < 0);
+    bd.innerHTML = `<span>Días: <b>${num(c.days)}</b></span>` +
+      (DIV[key] > 1 ? `<span>Mensual actual: <b>${pesos(c.m1)}</b></span><span>Mensual nuevo: <b>${pesos(c.m2)}</b></span>` : '') +
+      `<span>Día actual: <b>${pesos(c.d1)}</b></span><span>Día nuevo: <b>${pesos(c.d2)}</b></span><span>Diferencia por día: <b>${pesos(c.dd)}</b></span>`;
+  });
+  $('#total-' + key).textContent = key === 'range' ? plural(total, 'día') : pesos(total);
+  return total;
+}
+['range', 'mes', 'tri', 'anio'].forEach(key => {
+  const box = $('#rows-' + key);
+  box.addEventListener('input', e => {
+    const inp = e.target, row = inp.closest('.row');
+    if (!row) return;
+    const r = S[key][row.dataset.i], f = inp.dataset.f, money = inp.hasAttribute('data-money');
+    r[f] = money ? parseMoney(inp.value) : inp.value;
+    if (money && r['p' + f]) { delete r['p' + f]; delete r['k' + f]; const tg = $(`[data-tag="${f}"]`, row); if (tg) tg.textContent = ''; }
+    save(); calcRows(key);
+  });
+  box.addEventListener('click', e => {
+    const d = e.target.closest('[data-act="del"]');
+    if (d) { delRow(key, Number(d.closest('.row').dataset.i)); return; }
+    const p = e.target.closest('[data-act="pick"]');
+    if (p) rowPick(key, Number(p.closest('.row').dataset.i), p.dataset.f);
+  });
+});
+
+/* Money inputs show raw digits while editing and "$ 1.234" otherwise. */
+document.addEventListener('focusin', e => {
+  const i = e.target;
+  if (!i.hasAttribute || !i.hasAttribute('data-money')) return;
+  const n = parseMoney(i.value), raw = n ? String(n) : '';
+  i.value = raw;
+  setTimeout(() => { if (document.activeElement === i && i.value === raw) i.select(); }, 0);
+});
+document.addEventListener('focusout', e => {
+  const i = e.target;
+  if (!i.hasAttribute || !i.hasAttribute('data-money')) return;
+  const n = parseMoney(i.value);
+  i.value = n ? pesos(n) : '';
+});
+
+function addRow(key) {
+  const prev = S[key][S[key].length - 1];
+  S[key].push(key === 'range' ? { a: '', b: '' } : { a: '', b: '', v1: prev ? prev.v1 : 0, v2: prev ? prev.v2 : 0, pv1: prev && prev.pv1, kv1: prev && prev.kv1, pv2: prev && prev.pv2, kv2: prev && prev.kv2 });
+  save(); renderRows(key);
+  const rows = $$('#rows-' + key + ' .row'), last = rows[rows.length - 1];
+  last.classList.add('is-new');
+  $('input', last).focus();
+  toast('Periodo añadido');
+}
+function delRow(key, i) {
+  S[key].splice(i, 1); save(); renderRows(key);
+  const rows = $$('#rows-' + key + ' .row');
+  if (rows.length) $('input', rows[Math.min(i, rows.length - 1)]).focus();
+  toast('Periodo eliminado');
+}
+
+/* ── Tabla de valores ── */
+const nm = x => String(x.y ?? '').trim();
+const planNames = g => [...new Set(S.cat[g].map(nm).filter(Boolean))];
+function renderCat() {
+  Object.keys(GROUPS).forEach(g => {
+    $('#cat-' + g).innerHTML = S.cat[g].length ? S.cat[g].map((x, i) => `<div class="cat-row" data-g="${g}" data-i="${i}">
+      <input type="text" data-cf="y" value="${esc(x.y ?? '')}" aria-label="Nombre del plan" placeholder="Nombre del plan">
+      <input type="text" data-cf="c" value="${esc(x.c || '')}" aria-label="Categoría" placeholder="Categoría">
+      <input type="text" inputmode="numeric" data-cf="v" data-money value="${x.v ? pesos(x.v) : ''}" aria-label="Valor" placeholder="$ 0">
+      <button class="del" data-act="catdel" aria-label="Eliminar plan">${icon('trash')}</button></div>`).join('')
+      : '<p class="cat-empty">Sin planes. Añade el primero.</p>';
+  });
+  refreshConsult();
+}
+function setOptions(sel, opts, keep) {
+  sel.innerHTML = opts.map(o => `<option value="${esc(o.v)}">${esc(o.t)}</option>`).join('');
+  if (opts.some(o => String(o.v) === String(keep))) sel.value = keep;
+  sel.disabled = !opts.length;
+}
+function refreshConsult() {
+  const g = $('#q-g').value, ySel = $('#q-y'), cSel = $('#q-c');
+  setOptions(ySel, planNames(g).map(y => ({ v: y, t: y })), ySel.value);
+  const y = ySel.value;
+  const items = S.cat[g].map((x, i) => ({ x, i })).filter(o => nm(o.x) === y && o.x.c);
+  setOptions(cSel, items.map(o => ({ v: o.i, t: o.x.c })), cSel.value);
+  const hit = items.find(o => String(o.i) === cSel.value);
+  $$('.cat-row.hit').forEach(r => r.classList.remove('hit'));
+  if (hit) {
+    $('#q-v').textContent = hit.x.v ? pesos(hit.x.v) : 'Sin valor';
+    $('#q-note').textContent = `${GROUPS[g]} · ${y} · ${hit.x.c}`;
+    const r = $(`.cat-row[data-g="${g}"][data-i="${hit.i}"]`);
+    if (r) r.classList.add('hit');
+  } else { $('#q-v').textContent = '—'; $('#q-note').textContent = 'No hay planes registrados'; }
+}
+['q-g', 'q-y', 'q-c'].forEach(id => $('#' + id).addEventListener('change', refreshConsult));
+$('.cat-grid').addEventListener('input', e => {
+  const inp = e.target, row = inp.closest('.cat-row');
+  if (!row) return;
+  const x = S.cat[row.dataset.g][row.dataset.i], f = inp.dataset.cf;
+  x[f] = f === 'v' ? parseMoney(inp.value) : inp.value;
+  save(); refreshConsult();
+});
+$('.cat-grid').addEventListener('click', e => {
+  const b = e.target.closest('[data-act="catdel"]');
+  if (b) { const r = b.closest('.cat-row'); catDel(r.dataset.g, Number(r.dataset.i)); }
+});
+function catAdd(g) {
+  S.cat[g].push({ y: '', c: '', v: 0 }); save(); renderCat();
+  const rows = $$('#cat-' + g + ' .cat-row');
+  $('[data-cf="y"]', rows[rows.length - 1]).focus();
+}
+function catDel(g, i) {
+  S.cat[g].splice(i, 1); save(); renderCat();
+  const rows = $$('#cat-' + g + ' .cat-row');
+  if (rows.length) $('input', rows[Math.min(i, rows.length - 1)]).focus();
+  toast('Plan eliminado');
+}
+
+/* ── Selector de plan ── */
+const picker = $('#picker');
+let pk = null;
+function openPicker(o) {
+  pk = Object.assign({ q: '', sel: 0 }, o);
+  const ns = planNames(pk.group);
+  pk.name = ns.includes(o.current) ? o.current : (ns[0] ?? null);
+  $('#pk-title').textContent = o.label;
+  $('#pk-q').value = '';
+  $('#pk-groups').hidden = !!o.lock;
+  $('#pk-hint').textContent = '↑ ↓ moverse · ← → cambiar plan' + (o.lock ? '' : ' · Shift ← → cambiar tipo') + ' · Enter elegir';
+  renderPicker();
+  openDialog(picker);
+  $('#pk-q').focus();
+}
+const pkItems = () => { const q = norm(pk.q.trim()); return S.cat[pk.group].filter(x => x.c && nm(x) === pk.name && (!q || norm(x.c).includes(q))); };
+function renderPicker() {
+  $$('#pk-groups .seg').forEach(b => b.classList.toggle('active', b.dataset.g === pk.group));
+  const ns = planNames(pk.group);
+  $('#pk-names').innerHTML = ns.map(n => `<button type="button" class="chip" data-n="${esc(n)}" aria-pressed="${n === pk.name}">${esc(n)}</button>`).join('');
+  const items = pkItems();
+  pk.sel = Math.max(0, Math.min(pk.sel, items.length - 1));
+  $('#pk-list').innerHTML = items.length
+    ? items.map((x, j) => `<button type="button" class="pk-item${j === pk.sel ? ' sel' : ''}" role="option" aria-selected="${j === pk.sel}" data-j="${j}"><span>${esc(x.c)}</span><b>${x.v ? pesos(x.v) : 'Sin valor'}</b></button>`).join('')
+    : `<p class="pk-empty">${ns.length ? 'Ninguna categoría coincide con la búsqueda.' : 'No hay planes de este tipo. Agrégalos en Tabla de valores.'}</p>`;
+  const sl = $('#pk-list .sel');
+  if (sl) sl.scrollIntoView({ block: 'nearest' });
+}
+function choose(j) {
+  const x = pkItems()[j];
+  if (!x || isClosing(picker)) return;
+  const g = pk.group, cb = pk.onPick;
+  closeDialog(picker).then(() => cb(x, g));
+}
+function setPkGroup(g) { pk.group = g; pk.name = planNames(g)[0] ?? null; pk.sel = 0; renderPicker(); $('#pk-q').focus(); }
+$('#pk-q').addEventListener('input', e => { pk.q = e.target.value; pk.sel = 0; renderPicker(); });
+$('#pk-names').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b) { pk.name = b.dataset.n; pk.sel = 0; renderPicker(); $('#pk-q').focus(); } });
+$('#pk-groups').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) setPkGroup(b.dataset.g); });
+$('#pk-list').addEventListener('click', e => { const b = e.target.closest('[data-j]'); if (b) choose(Number(b.dataset.j)); });
+function pickerKeys(e) {
+  const items = pkItems(), ns = planNames(pk.group);
+  if (e.key === 'ArrowDown') { e.preventDefault(); pk.sel = Math.min(pk.sel + 1, items.length - 1); renderPicker(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); pk.sel = Math.max(pk.sel - 1, 0); renderPicker(); }
+  else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.shiftKey && !pk.lock) {
+    e.preventDefault();
+    const gs = Object.keys(GROUPS), i = gs.indexOf(pk.group);
+    setPkGroup(gs[(i + (e.key === 'ArrowRight' ? 1 : -1) + gs.length) % gs.length]);
+  }
+  else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && (!pk.q || e.altKey)) {
+    e.preventDefault();
+    const i = ns.indexOf(pk.name), d = e.key === 'ArrowRight' ? 1 : -1;
+    if (ns.length) { pk.name = ns[Math.max(0, Math.min(ns.length - 1, i + d))]; pk.sel = 0; renderPicker(); }
+  }
+  else if (e.key === 'Enter') { e.preventDefault(); choose(pk.sel); }
+}
+function rowPick(key, i, f) {
+  openPicker({
+    group: key, lock: true, current: S[key][i]['k' + f],
+    label: `${f === 'v2' ? 'Valor plan nuevo' : 'Valor plan actual'} · ${GROUPS[key]}`,
+    onPick: x => {
+      const r = S[key][i];
+      r[f] = x.v || 0; r['p' + f] = `${nm(x)} · ${x.c}`; r['k' + f] = nm(x);
+      save(); renderRows(key);
+      const row = $$('#rows-' + key + ' .row')[i], inp = row && $(`[data-f="${f}"][data-money]`, row);
+      if (inp) inp.focus();
+      toast(x.v ? `Valor puesto: ${pesos(x.v)}` : 'Ese plan aún no tiene valor en la tabla', x.v ? 'success' : 'info');
+    }
+  });
+}
+function fieldPick(btn) {
+  const inp = document.getElementById(btn.dataset.pickFor), tag = btn.parentElement.querySelector('.plan-tag');
+  openPicker({
+    group: btn.dataset.group || 'mes', lock: false, current: inp.dataset.plan,
+    label: (inp.closest('.field').querySelector('label') || {}).textContent || 'Elegir plan',
+    onPick: (x, g) => {
+      inp.value = x.v || ''; inp.dataset.plan = nm(x);
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+      if (tag) tag.textContent = `${GROUPS[g]} · ${nm(x)} · ${x.c}`;
+      inp.focus();
+      toast(x.v ? `Valor puesto: ${pesos(x.v)}` : 'Ese plan aún no tiene valor en la tabla', x.v ? 'success' : 'info');
+    }
+  });
+}
+$$('[data-pick-for]').forEach(b => {
+  b.addEventListener('click', () => fieldPick(b));
+  const inp = document.getElementById(b.dataset.pickFor);
+  inp.addEventListener('input', e => {
+    if (!e.isTrusted) return;
+    const t = b.parentElement.querySelector('.plan-tag');
+    if (t) t.textContent = '';
+    delete inp.dataset.plan;
+  });
+});
+</script>
+<script>
+'use strict';
+/* ═══════════ Respuestas PQR: predefined, editable-before-copy answers ═══════════ */
+
+const PQR = [
+  { cat: 'Cierre PQR', title: 'Congelación por viaje internacional', body: 'A partir del 01/04/2025, no se aplican novedades de congelación por viaje internacional. Solo se procesarán las PQR creadas antes de esta fecha, o si el reporte se realizó por correo o a través de la línea de servicio al cliente antes del 01/04/2025. Si deseas congelar tu plan, puedes hacerlo desde la página web. //(YB)' },
+  { cat: 'Cierre PQR', title: 'Cambio asesor tardío (+5 días)', body: 'Se valida que la PQR fue creada el 30 de septiembre y, para el día de hoy, ya no se puede gestionar. Adicionalmente, no se evidencia que haya sido escalada. //(YB)' },
+  { cat: 'Gestión', title: 'Restablecimiento de usuario y contraseña', body: 'Se procedió a restablecer la contraseña de ingreso a nuestra plataforma Web y APP. //(YB)\nUsuario: XX\nContraseña: XX' },
+  { cat: 'Cierre PQR', title: 'Máximo de congelaciones alcanzado', body: 'Se valida que el afiliado ya utilizó las dos congelaciones permitidas a través de la página web. Por lo tanto, la PQR se cierra. //(YB)' },
+  { cat: 'Cierre PQR', title: 'Contrato ya firmado', body: 'Se valida que ya tiene el contrato firmado, por lo que se cierra la PQR. (YB)' },
+  { cat: 'Cierre PQR', title: 'Sin número de cotización adjunto', body: 'Se valida que no se adjuntó el número de cotización en esta PQR, por lo tanto, se cierra. Por favor, crea una nueva PQR incluyendo tanto el número de cotización como el certificado. Una vez creada, llama a la línea 9000 para escalar el caso. (YB)' },
+  { cat: 'Cierre PQR', title: 'Plan Débito Trimestre — sin novedades', body: 'Se valida que el afiliado tiene un plan Débito Trimestre, el cual no es válido para novedades. Por este motivo, se cierra la PQR. (YB)' },
+  { cat: 'Crear PQR', title: 'Cambio de categoría (trimestral)', body: 'Se solicita el ajuste de categoría a XX para el plan trimestral, dado que el cambio no se reflejó automáticamente después de realizar el pago con el número de factura XX. //(YB)' },
+  { cat: 'Cierre PQR', title: 'Referido — no cumple TyC (plan mensual)', body: 'Se valida que [NOMBRE], con C.C. [DOC], no cumple con los términos y condiciones para el beneficio de referido. La razón es que el afiliado no estaba inactivo por al menos 180 días, ya que mantenía un plan Débito Mensual Gold. (YB)' },
+  { cat: 'Cierre PQR', title: 'Referido — no cumple TyC (plan trimestre)', body: 'Se valida que [NOMBRE], con C.C. [DOC], no cumple con los términos y condiciones para el beneficio de referido. La razón es que la afiliada compró un débito trimestre sin permanencia, por lo que no cumple con TyC de referido. //(YB)' },
+  { cat: 'Cierre PQR', title: 'Datos cambiados — unificación ya realizada', body: 'Se verifica en sistema la unificación de perfil; ya se realizó, quedó asignado C.C. [DOC], se cierra PQR. SAB' },
+  { cat: 'Cierre PQR', title: 'Incapacidad menor a 5 días', body: 'Se valida la información y se determina que la incapacidad no aplica ya que es menor a 5 días.' },
+  { cat: 'Cierre PQR', title: 'Afiliado ya tiene CC en MyBodyTech', body: 'Se validó la información y el afiliado ya cuenta con C.C. en la plataforma de MyBodyTech.' }
+];
+
+const badgeClass = cat => { const t = norm(cat); return t.includes('crear') ? 'b-crear' : t.includes('gestion') ? 'b-gestion' : 'b-cierre'; };
+
+function renderPqr() {
+  $('#pqrList').innerHTML = PQR.map((p, i) => `
+    <article class="pt-item">
+      <div class="pt-head">
+        <span class="badge ${badgeClass(p.cat)}">${esc(p.cat)}</span>
+        <span class="pt-key">${esc(p.title)}</span>
+        <div class="pt-actions">
+          <button class="icon-btn" data-pt-act="save" title="Guardar en Plantillas" aria-label="Guardar «${esc(p.title)}» en Plantillas">${icon('bookmark')}</button>
+          <button class="btn btn-secondary btn-sm pt-copy" data-pt-act="copy">${icon('copy')}Copiar</button>
+        </div>
+      </div>
+      <div class="pt-body" id="pt${i + 1}" contenteditable="true" spellcheck="false" aria-label="Texto de «${esc(p.title)}», editable">${esc(p.body)}</div>
+    </article>`).join('');
+}
+
+function filtrarPqr() {
+  const q = norm($('#pqrSearch').value), items = $$('#pqrList .pt-item');
+  let n = 0;
+  items.forEach(it => { const ok = !q || norm(it.textContent).includes(q); it.hidden = !ok; if (ok) n++; });
+  $('#pqrCount').textContent = q ? `${n} de ${items.length}` : `${items.length} respuestas`;
+  $('#pqrNone').style.display = n ? 'none' : 'block';
+}
+
+$('#pqrSearch').addEventListener('input', filtrarPqr);
+$('#pqrSearch').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); const f = $('#pqrList .pt-item:not([hidden]) .pt-copy'); if (f) f.click(); }
+});
+$('#pqrList').addEventListener('click', e => {
+  const b = e.target.closest('[data-pt-act]');
+  if (!b) return;
+  const item = b.closest('.pt-item'), text = $('.pt-body', item).textContent.trim();
+  if (b.dataset.ptAct === 'copy') copyText(text, b, 'Respuesta copiada');
+  else Tpl.openEditor({ name: $('.pt-key', item).textContent, category: $('.badge', item).textContent, content: text });
+});
+</script>
+<script>
+'use strict';
+/* ═══════════ Plantillas: create, view, edit, delete, search, filter and sort user templates ═══════════
+   Data lives in localStorage under `mybt-templates` as { v, items: Template[] }:
+   Template = { id, name, category, content, fav, uses, createdAt, updatedAt } */
+
+const Tpl = (() => {
+  const KEY = 'mybt-templates';
+  const PREFS_KEY = 'mybt-templates-prefs';
+  const PREVIEW_CHARS = 320;
+
+  const SORTS = {
+    recent: (a, b) => b.updatedAt - a.updatedAt,
+    name: (a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base', numeric: true }),
+    uses: (a, b) => (b.uses - a.uses) || (b.updatedAt - a.updatedAt),
+    oldest: (a, b) => a.createdAt - b.createdAt
+  };
+
+  const el = {
+    browse: $('#tplBrowse'), grid: $('#tplGrid'), filters: $('#tplFilters'), count: $('#tplCount'),
+    search: $('#tplSearch'), sort: $('#tplSort'), empty: $('#tplEmpty'), noResults: $('#tplNoResults'),
+    importInput: $('#tplImport'),
+    dlg: $('#tplDialog'), form: $('#tplForm'), title: $('#tplDlgTitle'), save: $('#tplSave'),
+    name: $('#tplName'), cat: $('#tplCat'), content: $('#tplContent'),
+    nameErr: $('#tplNameErr'), contentErr: $('#tplContentErr'), chars: $('#tplChars'),
+    catList: $('#tplCatList'), catSuggest: $('#tplCatSuggest')
+  };
+
+  /* ── State ── */
+  const sanitize = t => {
+    const now = Date.now();
+    return {
+      id: String(t.id || newId()),
+      name: String(t.name || '').trim().slice(0, 80),
+      category: String(t.category || '').trim().slice(0, 40),
+      content: String(t.content || ''),
+      fav: !!t.fav,
+      uses: Math.max(0, Number(t.uses) || 0),
+      createdAt: Number(t.createdAt) || now,
+      updatedAt: Number(t.updatedAt) || Number(t.createdAt) || now
+    };
+  };
+  const isValid = t => t && typeof t === 'object' && String(t.name || '').trim() && String(t.content || '').trim();
+
+  let items = (store.get(KEY, null)?.items || []).filter(isValid).map(sanitize);
+  const prefs = Object.assign({ sort: 'recent', filter: 'all' }, store.get(PREFS_KEY, {}));
+  if (!SORTS[prefs.sort]) prefs.sort = 'recent';
+  let shown = new Set();   // ids rendered last time, to animate only new cards
+  let editingId = null;    // null → creating
+  let snapshot = '';       // editor contents when opened, for the unsaved-changes guard
+
+  const persist = () => store.set(KEY, { v: 1, items }) || toast('No se pudo guardar en este navegador', 'error');
+  const savePrefs = () => store.set(PREFS_KEY, prefs);
+  const byId = id => items.find(t => t.id === id);
+  const categories = () => [...new Set(items.map(t => t.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+
+  /* ── Filtering ── */
+  const matchesFilter = t => {
+    const f = prefs.filter;
+    if (f === 'all') return true;
+    if (f === 'fav') return t.fav;
+    if (f === 'none') return !t.category;
+    return f.startsWith('cat:') && t.category === f.slice(4);
+  };
+  const matchesQuery = (t, q) => !q || norm(t.name).includes(q) || norm(t.category).includes(q) || norm(t.content).includes(q);
+
+  /** Falls back to "Todas" when the active filter no longer has any match (e.g. last template of a category removed). */
+  function validateFilter() {
+    const f = prefs.filter;
+    const ok = f === 'all' || (f === 'fav' && items.some(t => t.fav)) || (f === 'none' && items.some(t => !t.category)) ||
+      (f.startsWith('cat:') && items.some(t => t.category === f.slice(4)));
+    if (!ok) { prefs.filter = 'all'; savePrefs(); }
+  }
+
+  /* ── Rendering ── */
+  function renderFilters() {
+    const count = pred => items.filter(pred).length;
+    const chips = [{ v: 'all', label: 'Todas', n: items.length }];
+    const favs = count(t => t.fav);
+    if (favs) chips.push({ v: 'fav', label: 'Favoritas', n: favs, icon: 'star' });
+    categories().forEach(c => chips.push({ v: 'cat:' + c, label: c, n: count(t => t.category === c) }));
+    const none = count(t => !t.category);
+    if (none && none !== items.length) chips.push({ v: 'none', label: 'Sin categoría', n: none });
+    el.filters.innerHTML = chips.map(c =>
+      `<button type="button" class="chip" data-filter="${esc(c.v)}" aria-pressed="${prefs.filter === c.v}">${c.icon ? icon(c.icon) : ''}${esc(c.label)}<span class="chip-count">${c.n}</span></button>`
+    ).join('');
+  }
+
+  function metaText(t) {
+    const uses = t.uses ? ` · ${t.uses} ${t.uses === 1 ? 'uso' : 'usos'}` : '';
+    return `Editada ${relTime(t.updatedAt)}${uses}`;
+  }
+
+  function cardHTML(t, q, i, entering) {
+    const preview = t.content.length > PREVIEW_CHARS ? t.content.slice(0, PREVIEW_CHARS) + '…' : t.content;
+    return `
+      <article class="tpl-card${entering ? ' is-entering' : ''}" data-id="${esc(t.id)}" tabindex="0" style="--i:${Math.min(i, 12)}" aria-label="${esc(t.name)}">
+        <div class="tpl-card-head">
+          <h3 class="tpl-name">${highlight(t.name, q)}</h3>
+          <button type="button" class="icon-btn tpl-fav" data-tpl-act="fav" aria-pressed="${t.fav}" aria-label="${t.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}" title="${t.fav ? 'Quitar de favoritas' : 'Marcar como favorita'}">${icon('star')}</button>
+        </div>
+        <p class="tpl-preview">${highlight(preview, q)}</p>
+        <div class="tpl-meta">${t.category ? `<span class="badge">${highlight(t.category, q)}</span>` : ''}<span data-meta>${metaText(t)}</span></div>
+        <div class="tpl-foot">
+          <div class="tpl-actions">
+            <button type="button" class="icon-btn" data-tpl-act="edit" aria-label="Editar" title="Editar">${icon('pencil')}</button>
+            <button type="button" class="icon-btn" data-tpl-act="duplicate" aria-label="Duplicar" title="Duplicar">${icon('duplicate')}</button>
+            <button type="button" class="icon-btn danger" data-tpl-act="delete" aria-label="Eliminar" title="Eliminar">${icon('trash')}</button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" data-tpl-act="copy">${icon('copy')}Copiar</button>
+        </div>
+      </article>`;
+  }
+
+  function render() {
+    validateFilter();
+    const q = norm(el.search.value.trim());
+    const list = items.filter(t => matchesFilter(t) && matchesQuery(t, q)).sort(SORTS[prefs.sort]);
+    const hasItems = items.length > 0;
+
+    el.empty.hidden = hasItems;
+    el.browse.hidden = !hasItems;
+    el.noResults.hidden = !hasItems || list.length > 0;
+    el.sort.value = prefs.sort;
+    renderFilters();
+
+    let entering = 0;
+    el.grid.innerHTML = list.map(t => cardHTML(t, q, shown.has(t.id) ? 0 : entering++, !shown.has(t.id))).join('');
+    shown = new Set(list.map(t => t.id));
+
+    const filtered = q || prefs.filter !== 'all';
+    el.count.textContent = !hasItems ? '' : filtered ? `${list.length} de ${items.length}` : `${items.length} ${items.length === 1 ? 'plantilla' : 'plantillas'}`;
+  }
+
+  const cardOf = id => el.grid.querySelector(`.tpl-card[data-id="${CSS.escape(id)}"]`);
+  function highlightCard(id) {
+    const c = cardOf(id);
+    if (!c) return;
+    c.classList.remove('is-entering', 'is-highlight');
+    void c.offsetWidth;
+    c.classList.add('is-highlight');
+    c.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
+  /** Plays the leave animation, then runs `done`. */
+  function leave(card, done) {
+    if (!card || reducedMotion()) { done(); return; }
+    card.classList.add('is-leaving');
+    setTimeout(done, 200);
+  }
+
+  /* ── Actions ── */
+  function copy(id, btn) {
+    const t = byId(id);
+    if (!t) return;
+    copyText(t.content, btn, 'Plantilla copiada').then(ok => {
+      if (!ok) return;
+      t.uses += 1;
+      persist();
+      const meta = cardOf(id)?.querySelector('[data-meta]');
+      if (meta) meta.textContent = metaText(t);
+    });
+  }
+
+  function toggleFav(id, btn) {
+    const t = byId(id);
+    if (!t) return;
+    t.fav = !t.fav;
+    persist();
+    if (prefs.filter === 'fav' && !t.fav) { leave(cardOf(id), render); return; }
+    btn.setAttribute('aria-pressed', String(t.fav));
+    const label = t.fav ? 'Quitar de favoritas' : 'Marcar como favorita';
+    btn.setAttribute('aria-label', label); btn.title = label;
+    btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse');
+    renderFilters();
+    toast(t.fav ? 'Añadida a favoritas' : 'Quitada de favoritas', 'info');
+  }
+
+  function duplicate(id) {
+    const t = byId(id);
+    if (!t) return;
+    const now = Date.now();
+    const copyItem = sanitize({ ...t, id: newId(), name: uniqueName(`${t.name} (copia)`), fav: false, uses: 0, createdAt: now, updatedAt: now });
+    items.push(copyItem);
+    persist();
+    render();
+    toast('Plantilla duplicada');
+  }
+
+  async function remove(id) {
+    const t = byId(id);
+    if (!t) return;
+    const ok = await confirmDialog({
+      title: '¿Eliminar esta plantilla?',
+      message: `«${t.name}» se eliminará de forma permanente.`,
+      confirmLabel: 'Eliminar'
+    });
+    if (!ok) return;
+    leave(cardOf(id), () => {
+      items = items.filter(x => x.id !== id);
+      persist();
+      render();
+      toast('Plantilla eliminada');
+    });
+  }
+
+  function uniqueName(base) {
+    const taken = new Set(items.map(t => norm(t.name)));
+    let name = base.slice(0, 80), n = 2;
+    while (taken.has(norm(name))) name = `${base.slice(0, 74)} ${n++}`;
+    return name;
+  }
+
+  function resetView() {
+    el.search.value = '';
+    prefs.filter = 'all';
+    savePrefs();
+    render();
+  }
+
+  /* ── Editor ── */
+  const serialize = () => JSON.stringify([el.name.value, el.cat.value, el.content.value]);
+
+  function updateChars() {
+    const n = el.content.value.length;
+    el.chars.textContent = `${n.toLocaleString('es-CO')} ${n === 1 ? 'carácter' : 'caracteres'}`;
+  }
+  function setError(input, errEl, msg) {
+    errEl.textContent = msg;
+    if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+  }
+  function renderCatSuggestions() {
+    const cats = categories(), current = el.cat.value.trim();
+    el.catList.innerHTML = cats.map(c => `<option value="${esc(c)}"></option>`).join('');
+    el.catSuggest.innerHTML = cats.slice(0, 8).map(c => `<button type="button" class="chip" data-cat="${esc(c)}" aria-pressed="${c === current}">${esc(c)}</button>`).join('');
+  }
+
+  /** Opens the editor. `init` prefills a new template; pass `id` to edit an existing one. */
+  function openEditor(init = {}, id = null) {
+    const t = id ? byId(id) : null;
+    editingId = t ? t.id : null;
+    el.title.textContent = t ? 'Editar plantilla' : 'Nueva plantilla';
+    el.save.textContent = t ? 'Guardar cambios' : 'Crear plantilla';
+    el.name.value = t ? t.name : (init.name || '');
+    el.cat.value = t ? t.category : (init.category || '');
+    el.content.value = t ? t.content : (init.content || '');
+    setError(el.name, el.nameErr, '');
+    setError(el.content, el.contentErr, '');
+    updateChars();
+    renderCatSuggestions();
+    snapshot = serialize();
+    openDialog(el.dlg);
+    const focusTarget = el.name.value ? el.content : el.name;
+    focusTarget.focus();
+    focusTarget.setSelectionRange(focusTarget.value.length, focusTarget.value.length);
+    el.content.scrollTop = 0;
+  }
+
+  async function requestCloseEditor() {
+    if (serialize() !== snapshot) {
+      const discard = await confirmDialog({
+        title: '¿Descartar los cambios?',
+        message: 'Los cambios que hiciste en esta plantilla se perderán.',
+        confirmLabel: 'Descartar',
+        cancelLabel: 'Seguir editando'
+      });
+      if (!discard) return;
+    }
+    closeDialog(el.dlg);
+  }
+  el.dlg._onRequestClose = requestCloseEditor;
+
+  function validate() {
+    const name = el.name.value.trim(), content = el.content.value.trim();
+    let nameMsg = '';
+    if (!name) nameMsg = 'Escribe un nombre para la plantilla.';
+    else if (items.some(t => t.id !== editingId && norm(t.name) === norm(name))) nameMsg = 'Ya existe una plantilla con ese nombre.';
+    setError(el.name, el.nameErr, nameMsg);
+    setError(el.content, el.contentErr, content ? '' : 'El contenido no puede estar vacío.');
+    if (nameMsg) { el.name.focus(); return false; }
+    if (!content) { el.content.focus(); return false; }
+    return true;
+  }
+
+  function submit(e) {
+    e.preventDefault();
+    if (isClosing(el.dlg) || !validate()) return;
+    const now = Date.now();
+    const data = { name: el.name.value.trim(), category: el.cat.value.trim(), content: el.content.value.replace(/\s+$/, '') };
+    let id = editingId;
+    if (id) {
+      Object.assign(byId(id), sanitize({ ...byId(id), ...data, updatedAt: now }));
+    } else {
+      const t = sanitize({ ...data, id: newId(), createdAt: now, updatedAt: now });
+      items.push(t);
+      id = t.id;
+    }
+    persist();
+    snapshot = serialize();
+    // Make sure the saved template is visible in the list.
+    const t = byId(id);
+    if (!matchesFilter(t) || !matchesQuery(t, norm(el.search.value.trim()))) { el.search.value = ''; prefs.filter = 'all'; savePrefs(); }
+    const wasEditing = !!editingId;
+    closeDialog(el.dlg).then(() => {
+      render();
+      if (curSec() === 'plantillas') highlightCard(id);
+      toast(wasEditing ? 'Cambios guardados' : 'Plantilla creada');
+    });
+  }
+
+  /* ── Import / export ── */
+  function exportAll() {
+    if (!items.length) { toast('No hay plantillas para exportar', 'info'); return; }
+    const blob = new Blob([JSON.stringify({ app: 'mybt', type: 'plantillas', v: 1, exportedAt: new Date().toISOString(), items }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `mybt-plantillas-${isoD(todayD())}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Copia de seguridad descargada');
+  }
+
+  async function importFile(file) {
+    const trigger = $$('[data-tpl-menu="import"]').find(b => b.offsetParent);
+    trigger?.classList.add('is-loading');
+    try {
+      const parsed = JSON.parse(await file.text());
+      const incoming = (Array.isArray(parsed) ? parsed : parsed.items || []).filter(isValid).map(sanitize);
+      if (!incoming.length) { toast('El archivo no contiene plantillas válidas', 'error'); return; }
+      const ids = new Set(items.map(t => t.id));
+      let added = 0, updated = 0;
+      incoming.forEach(t => {
+        if (ids.has(t.id)) { Object.assign(byId(t.id), t); updated++; }
+        else { items.push(t); ids.add(t.id); added++; }
+      });
+      persist();
+      resetView();
+      toast(`${added} añadidas${updated ? `, ${updated} actualizadas` : ''}`);
+    } catch (err) {
+      toast('No se pudo leer el archivo', 'error');
+    } finally {
+      trigger?.classList.remove('is-loading');
+      el.importInput.value = '';
+    }
+  }
+
+  /* ── Events ── */
+  el.grid.addEventListener('click', e => {
+    const card = e.target.closest('.tpl-card');
+    if (!card || card.classList.contains('is-leaving')) return;
+    const id = card.dataset.id, btn = e.target.closest('[data-tpl-act]');
+    const act = btn ? btn.dataset.tplAct : 'edit';
+    if (act === 'copy') copy(id, btn);
+    else if (act === 'fav') toggleFav(id, btn);
+    else if (act === 'duplicate') duplicate(id);
+    else if (act === 'delete') remove(id);
+    else openEditor({}, id);
+  });
+  el.grid.addEventListener('keydown', e => {
+    const card = e.target.classList.contains('tpl-card') ? e.target : null;
+    if (!card) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEditor({}, card.dataset.id); }
+    else if (e.key === 'Delete') { e.preventDefault(); remove(card.dataset.id); }
+  });
+  el.filters.addEventListener('click', e => {
+    const b = e.target.closest('[data-filter]');
+    if (!b || prefs.filter === b.dataset.filter) return;
+    prefs.filter = b.dataset.filter;
+    savePrefs();
+    shown = new Set();
+    render();
+  });
+  el.search.addEventListener('input', render);
+  el.search.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); const first = $('.tpl-card [data-tpl-act="copy"]', el.grid); if (first) first.click(); }
+    else if (e.key === 'Escape' && el.search.value) { e.preventDefault(); el.search.value = ''; render(); }
+  });
+  el.sort.addEventListener('change', () => { prefs.sort = el.sort.value; savePrefs(); shown = new Set(); render(); });
+
+  $$('[data-tpl-new]').forEach(b => b.addEventListener('click', () => openEditor()));
+  $$('[data-tpl-clear]').forEach(b => b.addEventListener('click', resetView));
+  document.addEventListener('click', e => {
+    const m = e.target.closest('[data-tpl-menu]');
+    if (!m) return;
+    if (m.dataset.tplMenu === 'export') exportAll();
+    else el.importInput.click();
+  });
+  // Refresh relative dates ("hace 5 minutos") whenever the section is shown again.
+  document.addEventListener('sectionchange', e => { if (e.detail === 'plantillas') render(); });
+  el.importInput.addEventListener('change', () => { const f = el.importInput.files[0]; if (f) importFile(f); });
+
+  el.form.addEventListener('submit', submit);
+  el.content.addEventListener('input', () => { updateChars(); if (el.content.value.trim()) setError(el.content, el.contentErr, ''); });
+  el.name.addEventListener('input', () => { if (el.nameErr.textContent) setError(el.name, el.nameErr, ''); });
+  el.cat.addEventListener('input', () => $$('[data-cat]', el.catSuggest).forEach(c => c.setAttribute('aria-pressed', String(c.dataset.cat === el.cat.value.trim()))));
+  el.catSuggest.addEventListener('click', e => {
+    const c = e.target.closest('[data-cat]');
+    if (!c) return;
+    el.cat.value = c.getAttribute('aria-pressed') === 'true' ? '' : c.dataset.cat;
+    el.cat.dispatchEvent(new Event('input'));
+  });
+
+  /** Keyboard handling while any dialog other than the picker/help is open. */
+  function dialogKeys(e) {
+    if (el.dlg.open && !$('#confirmDlg').open && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      el.form.requestSubmit();
+    }
+  }
+
+  /** Alt+C in the Plantillas section: copies the focused template. */
+  function copyFocused() {
+    const card = document.activeElement?.closest?.('.tpl-card');
+    if (card) { copy(card.dataset.id, $('[data-tpl-act="copy"]', card)); return; }
+    toast('Enfoca una plantilla o busca y pulsa Enter', 'info');
+  }
+
+  return { init: render, render, openEditor, copyFocused, resetView, dialogKeys };
+})();
+</script>
+<script>
+'use strict';
+/* ═══════════ Cross-tool actions (copy, reset, add…) and keyboard shortcuts ═══════════ */
+
+/** Plain-text summary of a calculator, used by "Copiar" / Alt+C. */
+function summaryText(key) {
+  if (key === 'plan') {
+    const f = calcPlan();
+    if (f === null) return null;
+    return `Inicio: ${fDate(parseD(S.plan.start))}\nFecha + año: ${$('#tk-year').textContent}\nFecha final: ${fDate(f)}`;
+  }
+  if (key === 'cat') { const t = $('#q-v').textContent; return t === '—' ? null : `${$('#q-note').textContent}: ${t}`; }
+  const lines = S[key].map(r => {
+    const c = rowCalc(key, r);
+    if (!c) return null;
+    if (key === 'range') return `${fDate(c.a)} – ${fDate(c.b)}: ${plural(c.days, 'día')}`;
+    const tag = r.pv2 ? ` (${r.pv2})` : '';
+    return `${fDate(c.a)} – ${fDate(c.b)} (${plural(c.days, 'día')}): ${pesos(r.v1 || 0)} → ${pesos(r.v2 || 0)}${tag} = ${pesos(c.t)}`;
+  }).filter(Boolean);
+  if (!lines.length) return null;
+  return lines.join('\n') + (lines.length > 1 ? `\nTotal: ${$('#total-' + key).textContent}` : '');
+}
+
+function copyCurrent(btn) {
+  const sec = curSec(), key = SEC2KEY[sec], el = document.activeElement;
+  if (key) {
+    const t = summaryText(key);
+    if (!t) { toast('No hay resultados para copiar', 'info'); return; }
+    copyText(t, btn || $(`#sec-${sec} [data-act="copy"]`), 'Resultado copiado');
+    return;
+  }
+  if (sec === 'plantillas') { Tpl.copyFocused(); return; }
+  const card = el && el.closest && el.closest('.section.active .card, .section.active .pt-item');
+  const scope = card || $('#sec-' + sec);
+  const b = $('.copy-btn, .pt-copy', scope);
+  if (b && (card || sec !== 'pqr')) { b.click(); return; }
+  const hero = $('.calc-result.visible .calc-stat.hero .calc-stat-value', scope);
+  if (hero) { copyText(hero.textContent.trim(), $('[data-act="copyhero"]', scope), 'Valor copiado'); return; }
+  toast(sec === 'pqr' ? 'Enfoca una respuesta o escribe en el buscador y pulsa Enter' : 'Primero llena los campos', 'info');
+}
+
+/** Resets every input in `scope` to its default value and re-runs its listeners. */
+function clearScope(scope) {
+  $$('input, select', scope).forEach(i => {
+    if (i.type === 'search') return;
+    if (i.tagName === 'SELECT') i.selectedIndex = 0; else i.value = i.defaultValue;
+    delete i.dataset.plan;
+    i.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  $$('.plan-tag', scope).forEach(t => { t.textContent = ''; });
+}
+
+async function resetCurrent() {
+  const sec = curSec(), key = SEC2KEY[sec];
+  if (key === 'cat') {
+    const ok = await confirmDialog({
+      title: '¿Restablecer la tabla de valores?',
+      message: 'Se volverá a los precios de julio 2026 y se perderán los cambios que hiciste.',
+      confirmLabel: 'Restablecer'
+    });
+    if (!ok) return;
+    S.cat = clone(DEFAULTS.cat); save(); renderCat(); toast('Tabla restablecida');
+    return;
+  }
+  if (key) {
+    S[key] = clone(DEFAULTS[key]); save();
+    if (key === 'plan') { fillPlan(); calcPlan(); } else renderRows(key);
+    toast('Limpio');
+    const f = $(`#sec-${sec} input`); if (f) f.focus();
+    return;
+  }
+  if (sec === 'plantillas') { Tpl.resetView(); toast('Filtros limpios', 'info'); return; }
+  if (sec === 'pqr') { $('#pqrSearch').value = ''; filtrarPqr(); toast('Búsqueda limpia', 'info'); return; }
+  const el = document.activeElement, card = el && el.closest && el.closest('.section.active .card');
+  const scope = card || $('#sec-' + sec);
+  clearScope(scope);
+  toast(card ? 'Tarjeta limpia' : 'Herramienta limpia');
+  const f = $('input:not([type=search])', scope); if (f) f.focus();
+}
+
+function openHelp() { openDialog($('#help')); }
+
+/* ── Click actions ([data-act]) ── */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const a = b.dataset.act, key = SEC2KEY[curSec()];
+  if (a === 'copy') copyCurrent(b);
+  else if (a === 'copyout') copyOutput(b);
+  else if (a === 'reset') { if (b.closest('.card')) b.closest('.card').querySelector('input,select')?.focus(); resetCurrent(); }
+  else if (a === 'add' && key) addRow(key);
+  else if (a === 'catadd') catAdd(b.dataset.g);
+  else if (a === 'copytotal') { const t = $('#total-' + key).textContent; if (t === '—') toast('No hay total para copiar', 'info'); else copyText(t, b, 'Valor copiado'); }
+  else if (a === 'copyhero') { const h = $('.calc-result.visible .calc-stat.hero .calc-stat-value', b.closest('.card')); if (h) copyText(h.textContent.trim(), b, 'Valor copiado'); else toast('Primero llena los campos', 'info'); }
+  else if (a === 'clearcard') { clearScope(b.closest('.card')); toast('Tarjeta limpia'); }
+  else if (a === 'theme') toggleTheme();
+  else if (a === 'help') openHelp();
+});
+
+/* ── Keyboard ── */
+const isTyping = el => el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+
+function dateFieldKeys(e, el) {
+  const k = e.key;
+  if (k === 'h' || k === 'H') {
+    e.preventDefault();
+    el.value = isoD(todayD()); el.dispatchEvent(new Event('input', { bubbles: true }));
+    return true;
+  }
+  const plus = k === '+' || e.code === 'NumpadAdd' || (e.shiftKey && e.code === 'Equal');
+  const minus = k === '-' || k === '−' || k === '_' || e.code === 'NumpadSubtract' || (e.shiftKey && e.code === 'Minus');
+  if (!plus && !minus) return false;
+  e.preventDefault();
+  let t = parseD(el.value); if (t === null) t = todayD();
+  const d = plus ? 1 : -1;
+  t = e.shiftKey ? edate(t, d) : t + d * MS;
+  el.value = isoD(t); el.dispatchEvent(new Event('input', { bubbles: true }));
+  return true;
+}
+
+/** Enter moves to the next field; at the end it adds a row or focuses the copy button. */
+function enterAdvance(e, el) {
+  e.preventDefault();
+  const sec = curSec(), key = SEC2KEY[sec];
+  const panel = el.closest('[data-gpanel]');
+  const scope = panel || el.closest('.card') || $('#sec-' + sec);
+  const list = $$('input:not([type=search])', scope).filter(i => i.offsetParent !== null), i = list.indexOf(el);
+  if (e.shiftKey) { if (i > 0) list[i - 1].focus(); return; }
+  if (i < list.length - 1) list[i + 1].focus();
+  else if (panel) catAdd(panel.dataset.gpanel);
+  else if (key && key !== 'plan' && key !== 'cat') addRow(key);
+  else { const out = $('.copy-btn', scope); if (out) out.focus(); }
+}
+
+function altShortcuts(e, el) {
+  const c = e.code, m = c.match(/^(?:Digit|Numpad)([1-9])$/);
+  const sec = curSec(), key = SEC2KEY[sec];
+  if (m) { e.preventDefault(); const id = navOrder()[m[1] - 1]; if (id) goTo(id, true); return; }
+  if (c === 'ArrowDown' || c === 'ArrowUp') {
+    e.preventDefault();
+    const o = navOrder(), i = o.indexOf(sec);
+    goTo(o[(i + (c === 'ArrowDown' ? 1 : -1) + o.length) % o.length], true);
+    return;
+  }
+  if (c === 'KeyC') { e.preventDefault(); copyCurrent(); return; }
+  if (c === 'KeyR') { e.preventDefault(); resetCurrent(); return; }
+  if (c === 'KeyT') { e.preventDefault(); toggleTheme(); return; }
+  if (c === 'KeyN') {
+    e.preventDefault();
+    if (sec === 'plantillas') Tpl.openEditor();
+    else if (key === 'cat') { const pn = el && el.closest && el.closest('[data-gpanel]'); catAdd(pn ? pn.dataset.gpanel : $('#q-g').value); }
+    else if (key && key !== 'plan') addRow(key);
+    else toast('Esta herramienta no usa filas', 'info');
+    return;
+  }
+  if (c === 'KeyP') {
+    e.preventDefault();
+    const row = el && el.closest && el.closest('.row');
+    if (GROUPS[key]) {
+      const rows = $$('#rows-' + key + ' .row'), target = row || rows[rows.length - 1];
+      if (!target) { toast('Añade un periodo primero', 'info'); return; }
+      const f = el && el.dataset && (el.dataset.f === 'v1' || el.dataset.f === 'v2') ? el.dataset.f : 'v2';
+      rowPick(key, Number(target.dataset.i), f);
+      return;
+    }
+    const fieldBtn = (el && el.closest && el.closest('.field') && el.closest('.field').querySelector('[data-pick-for]')) || $(`#sec-${sec} [data-pick-for]`);
+    if (fieldBtn) fieldPick(fieldBtn); else toast('Elegir plan funciona en las calculadoras', 'info');
+    return;
+  }
+  if (c === 'Delete' || c === 'Backspace') {
+    const row = el && el.closest && el.closest('.row'), crow = el && el.closest && el.closest('.cat-row');
+    if (row) { e.preventDefault(); delRow(key, Number(row.dataset.i)); }
+    else if (crow) { e.preventDefault(); catDel(crow.dataset.g, Number(crow.dataset.i)); }
+  }
+}
+
+document.addEventListener('keydown', e => {
+  const el = document.activeElement;
+
+  // Modal layers first.
+  if (picker.open) { if (!isClosing(picker)) pickerKeys(e); return; }
+  const help = $('#help');
+  if (help.open) { if (e.key === '?') { e.preventDefault(); closeDialog(help); } return; }
+  if ($('dialog[open]')) { Tpl.dialogKeys(e); return; }
+  if (Menus.keys(e)) return;
+
+  if (el && el.type === 'date' && !e.altKey && !e.ctrlKey && !e.metaKey && dateFieldKeys(e, el)) return;
+
+  if (e.key === 'Enter' && el && el.tagName === 'INPUT' && el.type !== 'search' && !e.altKey && !e.ctrlKey && !e.metaKey && el.closest('.section.active')) {
+    enterAdvance(e, el);
+    return;
+  }
+
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'k') { e.preventDefault(); focusNavSearch(); return; }
+
+  if (e.altKey && !e.ctrlKey && !e.metaKey) { altShortcuts(e, el); if (e.defaultPrevented) return; }
+  if (e.key === 'Alt') document.body.classList.add('keys-hint');
+
+  if (!isTyping(el) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    if (e.key === '/') { e.preventDefault(); focusNavSearch(); return; }
+    if (e.key === '?') { e.preventDefault(); openHelp(); return; }
+  }
+  if (e.key === 'Escape') closeNav();
+});
+document.addEventListener('keyup', e => { if (e.key === 'Alt') document.body.classList.remove('keys-hint'); });
+window.addEventListener('blur', () => document.body.classList.remove('keys-hint'));
+</script>
+<script>
+'use strict';
+/* ═══════════ Boot ═══════════ */
+(function init() {
+  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  Object.keys(GENERATORS).forEach(generate);
+  fillPlan(); calcPlan();
+  ['range', 'mes', 'tri', 'anio'].forEach(renderRows);
+  renderCat();
+  renderPqr(); filtrarPqr();
+  Tpl.init();
+  numberNav();
+
+  let start = store.getRaw('mybt-last') || DEFAULT_SEC;
+  const hash = location.hash.slice(1);
+  if (hash && document.getElementById('sec-' + hash)) start = hash;
+  goTo(document.getElementById('sec-' + start) ? start : DEFAULT_SEC);
+
+  // Enable transitions only after the first paint.
+  requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('preload')));
+})();
+
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (document.getElementById('sec-' + h)) goTo(h); });
+</script>
+</body>
+</html>
