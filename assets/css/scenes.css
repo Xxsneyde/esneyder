@@ -168,7 +168,7 @@
 .journey .kicker { color: var(--ink-2); }
 .journey-grid {
   max-width: 1180px; margin: 48px auto 0;
-  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px;
   perspective: 1200px;
 }
 .jcard {
@@ -189,7 +189,7 @@
 .jcard:hover .jthumb { transform: scale(1.08); }
 .jcard::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 30%, rgba(var(--cine-shade), .9)); }
 .jnum { font-family: var(--serif); font-style: italic; font-size: 46px; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .7); }
-.jname { font-family: var(--serif); font-size: 28px; line-height: 1.05; }
+.jname { font-family: var(--serif); font-size: clamp(22px, 2vw, 28px); line-height: 1.05; }
 .jmeta { font-size: 12.5px; color: rgba(230, 234, 255, .7); }
 .jgo { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .14); transition: transform var(--dur-3) var(--ease-out), background var(--dur-2); }
 .jgo .ico { width: 16px; height: 16px; }
@@ -369,7 +369,7 @@
 .finale-foot { margin-top: 40px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-ink-2); }
 
 /* ══════════ Tools sitting on the sky: glass surfaces ══════════ */
-.stage .card, .stage .pt-item, .stage .tpl-card {
+.stage .card, .stage .tpl-card {
   background: var(--glass);
   border-color: var(--glass-line);
 }

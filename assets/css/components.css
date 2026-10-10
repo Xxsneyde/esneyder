@@ -1,7 +1,7 @@
 /* ═══════════ Reusable components ═══════════ */
 
 /* ── Buttons ──
-   .copy-btn / .ghost-btn / .pt-copy are semantic hooks used by the JS;
+   .copy-btn / .ghost-btn are semantic hooks used by the JS;
    their look comes from the .btn variants they are paired with. */
 .btn {
   position: relative;

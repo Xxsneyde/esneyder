@@ -1,4 +1,4 @@
-/* ═══════════ Tool-specific styles: calculators, plan ticket, price table, PQR ═══════════ */
+/* ═══════════ Tool-specific styles: calculators, plan ticket, price table ═══════════ */
 
 /* ── Stepper ── */
 .stepper { display: flex; }
@@ -196,34 +196,6 @@ dialog .search-field { max-width: none; }
 .sc:last-child { border-bottom: 0; }
 .sc .keys { display: flex; flex-shrink: 0; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-3); }
 
-/* ── Respuestas PQR ── */
-.list-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 16px; }
-.list-count { font-size: 13px; color: var(--ink-3); }
-.pqr-list { display: flex; flex-direction: column; gap: 10px; }
-.pt-item {
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-  transition: border-color var(--dur-2), box-shadow var(--dur-2);
-}
-.pt-item:hover { border-color: var(--line-2); }
-.pt-item:focus-within { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); box-shadow: 0 0 0 3px var(--accent-soft); }
-.pt-head { display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 18px; border-bottom: 1px solid var(--line); }
-.pt-key { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; }
-.pt-actions { display: flex; align-items: center; gap: 4px; }
-.pt-body {
-  padding: 14px 18px 16px;
-  font-size: 14.5px; line-height: 1.7;
-  color: var(--ink-2);
-  white-space: pre-wrap; overflow-wrap: anywhere;
-  cursor: text; outline: none;
-  transition: background var(--dur-2), color var(--dur-2);
-}
-.pt-body:focus { background: var(--surface-2); color: var(--ink); }
-.no-results { display: none; padding: 18px 2px; font-size: 14px; color: var(--ink-3); }
-
 /* ── Responsive ── */
 @media (max-width: 1100px) {
   .plan-layout { grid-template-columns: 1fr; }
@@ -242,10 +214,6 @@ dialog .search-field { max-width: none; }
   .row-range .out { grid-column: 1 / 3; align-items: flex-start; margin-top: 0; }
   .consult { grid-template-columns: 1fr; padding: 18px; }
   .add-row kbd { display: none; }
-  .pt-head { flex-wrap: wrap; padding-left: 14px; }
-  .pt-key { flex-basis: 100%; order: -1; }
-  .pt-actions { margin-left: auto; }
-  .pt-body { padding: 12px 14px 14px; }
 }
 @media (max-width: 560px) {
   .row-pro { grid-template-columns: 1fr 1fr 36px; }

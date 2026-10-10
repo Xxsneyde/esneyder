@@ -7,7 +7,6 @@
   fillPlan(); calcPlan();
   ['range', 'mes', 'tri', 'anio'].forEach(renderRows);
   renderCat();
-  renderPqr(); filtrarPqr();
   Tpl.init();
   numberNav();
 

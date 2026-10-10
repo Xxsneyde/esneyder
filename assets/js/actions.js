@@ -29,13 +29,14 @@ function copyCurrent(btn) {
     return;
   }
   if (sec === 'plantillas') { Tpl.copyFocused(); return; }
-  const card = el && el.closest && el.closest('.section.active .card, .section.active .pt-item');
+  if (sec === 'navecita') { Game.copyScore(btn); return; }
+  const card = el && el.closest && el.closest('.section.active .card');
   const scope = card || $('#sec-' + sec);
-  const b = $('.copy-btn, .pt-copy', scope);
-  if (b && (card || sec !== 'pqr')) { b.click(); return; }
+  const b = $('.copy-btn', scope);
+  if (b) { b.click(); return; }
   const hero = $('.calc-result.visible .calc-stat.hero .calc-stat-value', scope);
   if (hero) { copyText(hero.textContent.trim(), $('[data-act="copyhero"]', scope), 'Valor copiado'); return; }
-  toast(sec === 'pqr' ? 'Enfoca una respuesta o escribe en el buscador y pulsa Enter' : 'Primero llena los campos', 'info');
+  toast('Primero llena los campos', 'info');
 }
 
 /** Resets every input in `scope` to its default value and re-runs its listeners. */
@@ -69,7 +70,7 @@ async function resetCurrent() {
     return;
   }
   if (sec === 'plantillas') { Tpl.resetView(); toast('Filtros limpios', 'info'); return; }
-  if (sec === 'pqr') { $('#pqrSearch').value = ''; filtrarPqr(); toast('Búsqueda limpia', 'info'); return; }
+  if (sec === 'navecita') { Game.restart(); return; }
   const el = document.activeElement, card = el && el.closest && el.closest('.section.active .card');
   const scope = card || $('#sec-' + sec);
   clearScope(scope);

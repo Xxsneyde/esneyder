@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="assets/css/tools.css">
 <link rel="stylesheet" href="assets/css/templates.css">
 <link rel="stylesheet" href="assets/css/scenes.css">
+<link rel="stylesheet" href="assets/css/game.css">
 </head>
 <body class="preload">
 
@@ -69,6 +70,7 @@
   <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="m7 4 13 8-13 8Z"/></symbol>
   <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-game" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></symbol>
   <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
 </svg>
 
@@ -137,8 +139,12 @@
       <div class="nav-group" style="--i: 4">
         <span class="nav-num" aria-hidden="true">05</span>
         <div class="nav-label">Respuestas</div>
-        <button class="nav-item" data-sec="pqr"><svg class="ico"><use href="#i-message"/></svg><span class="nav-text">Respuestas PQR</span></button>
         <button class="nav-item" data-sec="plantillas"><svg class="ico"><use href="#i-template"/></svg><span class="nav-text">Plantillas</span></button>
+      </div>
+      <div class="nav-group" style="--i: 5">
+        <span class="nav-num" aria-hidden="true">06</span>
+        <div class="nav-label">Arcade</div>
+        <button class="nav-item" data-sec="navecita"><svg class="ico"><use href="#i-game"/></svg><span class="nav-text">Navecita</span></button>
       </div>
       <p class="nav-empty" id="navEmpty">Ninguna herramienta coincide.</p>
     </div>
@@ -182,14 +188,15 @@
   <section class="journey" id="recorrido" aria-labelledby="journeyTitle">
     <div class="journey-head rv">
       <p class="kicker">El recorrido</p>
-      <h2 class="display" id="journeyTitle">Cinco capítulos, <em>catorce herramientas.</em></h2>
+      <h2 class="display" id="journeyTitle">Seis capítulos, <em>trece herramientas y un juego.</em></h2>
     </div>
     <div class="journey-grid">
       <button class="jcard rv" data-go="ch-novedades" data-tilt><span class="jthumb" style="background-image: url(assets/img/mirada.webp)"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">01</span><span class="jname">Novedades</span><span class="jmeta">4 herramientas</span></button>
       <button class="jcard rv" data-go="ch-plan" data-tilt><span class="jthumb t-orb"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">02</span><span class="jname">Cambio de plan</span><span class="jmeta">4 herramientas</span></button>
       <button class="jcard rv" data-go="ch-fechas" data-tilt><span class="jthumb" style="background-image: url(assets/img/cometa.webp)"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">03</span><span class="jname">Fechas</span><span class="jmeta">2 herramientas</span></button>
       <button class="jcard rv" data-go="ch-otros" data-tilt><span class="jthumb t-cube"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">04</span><span class="jname">Otros cálculos</span><span class="jmeta">2 herramientas</span></button>
-      <button class="jcard rv" data-go="ch-respuestas" data-tilt><span class="jthumb" style="background-image: url(assets/img/encuentro.webp)"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">05</span><span class="jname">Respuestas</span><span class="jmeta">2 herramientas</span></button>
+      <button class="jcard rv" data-go="ch-respuestas" data-tilt><span class="jthumb" style="background-image: url(assets/img/ojos.webp)"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">05</span><span class="jname">Respuestas</span><span class="jmeta">1 herramienta</span></button>
+      <button class="jcard rv" data-go="ch-arcade" data-tilt><span class="jthumb" style="background-image: url(assets/img/lluvia.webp)"></span><span class="jgo" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span><span class="jnum" aria-hidden="true">06</span><span class="jname">Arcade</span><span class="jmeta">1 juego</span></button>
     </div>
   </section>
 
@@ -549,36 +556,24 @@
 
   <!-- ═══════════ Capítulo 05 · Respuestas ═══════════ -->
   <section class="chapter cine" id="ch-respuestas" data-scene aria-labelledby="ch-respuestas-t">
-    <div class="ch-bg" aria-hidden="true" style="background-image: url(assets/img/encuentro-bruma.webp)"></div>
+    <div class="ch-bg" aria-hidden="true" style="background-image: url(assets/img/ojos-bruma.webp)"></div>
     <div class="ch-inner">
       <div class="ch-copy">
         <span class="ch-num" aria-hidden="true">05</span>
         <p class="kicker rv">Capítulo cinco</p>
         <h2 class="display rv" id="ch-respuestas-t">Respuestas</h2>
-        <p class="ch-text rv">Respuestas PQR listas para editar y tus propias plantillas, organizadas y a un clic de copiarse.</p>
+        <p class="ch-text rv">Tus propios textos de respuesta: organizados por categoría, con búsqueda y a un clic de copiarse.</p>
         <div class="ch-tools rv">
-          <button class="ch-tool" data-go="pqr"><svg class="ico"><use href="#i-message"/></svg>Respuestas PQR</button>
           <button class="ch-tool" data-go="plantillas"><svg class="ico"><use href="#i-template"/></svg>Plantillas</button>
         </div>
       </div>
       <div class="ch-visual" data-scene-item>
-        <figure class="frame" data-tilt style="--ar: 415 / 739; --fw: 360px; --pos: 50% 78%; --glow: rgba(255, 141, 192, .5); --spin: -26deg"><img src="assets/img/encuentro.webp" alt="" width="622" height="1108" loading="lazy" decoding="async"><span class="glare"></span></figure>
+        <figure class="frame frame-wide" data-tilt style="--glow: rgba(235, 235, 245, .4); --spin: -22deg"><img src="assets/img/ojos.webp" alt="" width="1107" height="621" loading="lazy" decoding="async"><span class="glare"></span></figure>
       </div>
     </div>
   </section>
 
   <div class="stage" data-group="respuestas"><div class="main-inner">
-
-  <!-- RESPUESTAS PQR -->
-  <section class="section" id="sec-pqr">
-    <header class="page-head"><div><p class="page-eyebrow">Respuestas</p><h2 class="page-title">Respuestas PQR</h2><p class="page-sub">Haz clic en el texto para editarlo antes de copiar. Los cambios no se guardan al recargar; usa <strong>Guardar en Plantillas</strong> para conservar una versión propia.</p></div></header>
-    <div class="list-toolbar">
-      <label class="search-field"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="pqrSearch" placeholder="Buscar respuesta…" aria-label="Buscar respuesta" autocomplete="off" data-autofocus></label>
-      <span class="list-count" id="pqrCount"></span>
-    </div>
-    <div class="pqr-list" id="pqrList"></div>
-    <p class="no-results" id="pqrNone">Ninguna respuesta coincide con la búsqueda.</p>
-  </section>
 
   <!-- PLANTILLAS -->
   <section class="section" id="sec-plantillas">
@@ -622,13 +617,89 @@
     <div class="empty-state" id="tplEmpty" hidden>
       <div class="empty-icon"><svg class="ico"><use href="#i-template"/></svg></div>
       <h3>Aún no tienes plantillas</h3>
-      <p>Guarda los textos que usas a diario y cópialos con un clic. También puedes guardar cualquier respuesta PQR como plantilla.</p>
+      <p>Guarda los textos que usas a diario y cópialos con un clic.</p>
       <div class="empty-actions">
         <button class="btn btn-primary" data-tpl-new><svg class="ico"><use href="#i-plus"/></svg>Crear la primera</button>
         <button class="btn btn-secondary" data-tpl-menu="import"><svg class="ico"><use href="#i-upload"/></svg>Importar</button>
       </div>
     </div>
     <input type="file" id="tplImport" accept="application/json,.json" hidden>
+  </section>
+
+  </div></div>
+
+  <!-- ═══════════ Capítulo 06 · Arcade ═══════════ -->
+  <section class="chapter cine" id="ch-arcade" data-scene aria-labelledby="ch-arcade-t">
+    <div class="ch-bg" aria-hidden="true" style="background-image: url(assets/img/lluvia-bruma.webp)"></div>
+    <div class="ch-inner">
+      <div class="ch-copy">
+        <span class="ch-num" aria-hidden="true">06</span>
+        <p class="kicker rv">Capítulo seis</p>
+        <h2 class="display rv" id="ch-arcade-t">Arcade</h2>
+        <p class="ch-text rv">Un respiro entre caso y caso: la navecita de los celulares Nokia, con niveles, jefes, misiles y tu récord guardado.</p>
+        <div class="ch-tools rv">
+          <button class="ch-tool" data-go="navecita"><svg class="ico"><use href="#i-game"/></svg>Jugar Navecita</button>
+        </div>
+      </div>
+      <div class="ch-visual" data-scene-item>
+        <figure class="frame frame-wide" data-tilt style="--glow: rgba(235, 235, 245, .4); --spin: 22deg"><img src="assets/img/furia.webp" alt="" width="1107" height="621" loading="lazy" decoding="async"><span class="glare"></span></figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="stage" data-group="arcade"><div class="main-inner">
+
+  <!-- NAVECITA -->
+  <section class="section" id="sec-navecita">
+    <header class="page-head">
+      <div><p class="page-eyebrow">Arcade</p><h2 class="page-title">Navecita</h2><p class="page-sub">El clásico de la navecita de los Nokia. Esquiva, dispara, junta misiles y vence al jefe de cada nivel. Juega con el teclado (haz clic en la pantalla) o con las teclas del celular.</p></div>
+    </header>
+    <div class="game">
+      <div class="phone">
+        <div class="phone-top"><span class="phone-speaker" aria-hidden="true"></span><span class="phone-brand">MYBT</span></div>
+        <div class="phone-screen">
+          <div class="lcd" id="gameScreen" tabindex="0" data-autofocus role="application" aria-label="Juego Navecita. Flechas para moverte, espacio para disparar, X para lanzar un misil, P para pausar."><canvas id="gameCanvas" width="168" height="96"></canvas></div>
+        </div>
+        <div class="phone-keys" role="group" aria-label="Teclado del juego">
+          <button type="button" class="pk" tabindex="-1" aria-hidden="true"><b>1</b></button>
+          <button type="button" class="pk pk-up" data-gk="up" aria-label="Arriba"><b>2</b><i>▲</i></button>
+          <button type="button" class="pk" tabindex="-1" aria-hidden="true"><b>3</b></button>
+          <button type="button" class="pk pk-left" data-gk="left" aria-label="Izquierda"><b>4</b><i>◀</i></button>
+          <button type="button" class="pk pk-fire" data-gk="fire" aria-label="Disparar"><b>5</b><i>●</i></button>
+          <button type="button" class="pk pk-right" data-gk="right" aria-label="Derecha"><b>6</b><i>▶</i></button>
+          <button type="button" class="pk" tabindex="-1" aria-hidden="true"><b>7</b></button>
+          <button type="button" class="pk pk-down" data-gk="down" aria-label="Abajo"><b>8</b><i>▼</i></button>
+          <button type="button" class="pk" tabindex="-1" aria-hidden="true"><b>9</b></button>
+          <button type="button" class="pk pk-pause" data-gk="pause" aria-label="Pausa"><b>*</b><i>❚❚</i></button>
+          <button type="button" class="pk pk-special" data-gk="special" aria-label="Misil"><b>0</b><i>◆</i></button>
+          <button type="button" class="pk pk-sound" data-gk="sound" aria-label="Sonido"><b>#</b><i>♪</i></button>
+        </div>
+      </div>
+      <aside class="card game-side">
+        <div class="card-header"><span class="card-title">Partida</span><div class="card-actions"><button class="btn btn-primary btn-sm" data-game="play" id="gPlay">Jugar</button><button class="btn btn-secondary btn-sm" data-game="restart">Reiniciar <kbd>Alt R</kbd></button></div></div>
+        <div class="card-body">
+          <dl class="g-stats">
+            <div><dt>Puntos</dt><dd id="gScore">0</dd></div>
+            <div><dt>Récord</dt><dd id="gHi">0</dd></div>
+            <div><dt>Nivel</dt><dd id="gLevel">1</dd></div>
+            <div><dt>Vidas</dt><dd id="gLives">♥♥♥</dd></div>
+          </dl>
+          <div class="g-opts">
+            <button class="btn btn-secondary btn-sm" data-game="sound" id="gSound">Sonido: sí</button>
+            <button class="btn btn-secondary btn-sm" data-game="look" id="gLook">Pantalla: Verde clásico</button>
+            <button class="btn btn-secondary btn-sm" data-game="full">Pantalla completa</button>
+            <button class="btn btn-quiet btn-sm" data-act="copy">Copiar récord <kbd>Alt C</kbd></button>
+          </div>
+          <div class="g-help">
+            <div class="sc"><span>Moverse</span><span class="keys"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> · <kbd>2</kbd><kbd>4</kbd><kbd>6</kbd><kbd>8</kbd></span></div>
+            <div class="sc"><span>Disparar (mantén presionado)</span><span class="keys"><kbd>Espacio</kbd> · <kbd>5</kbd></span></div>
+            <div class="sc"><span>Lanzar misil</span><span class="keys"><kbd>X</kbd> · <kbd>0</kbd></span></div>
+            <div class="sc"><span>Pausa · Sonido</span><span class="keys"><kbd>P</kbd> · <kbd>M</kbd></span></div>
+            <p class="g-note">Premios: <b>M</b> +3 misiles · <b>R</b> disparo triple · <b>V</b> vida extra.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
   </section>
 
   </div></div>
@@ -708,6 +779,9 @@
     <div class="sc"><span>Guardar plantilla en el editor</span><span class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></span></div>
     <div class="sc"><span>Cambiar entre paleta clara y oscura</span><span class="keys"><kbd>Alt</kbd><kbd>T</kbd></span></div>
     <div class="sc"><span>Abrir ajustes (paletas y efectos)</span><span class="keys"><kbd>Alt</kbd><kbd>S</kbd></span></div>
+    <h3>Navecita</h3>
+    <div class="sc"><span>Moverse · disparar · misil</span><span class="keys"><kbd>←↑↓→</kbd> · <kbd>Espacio</kbd> · <kbd>X</kbd></span></div>
+    <div class="sc"><span>Pausa · sonido · partida nueva</span><span class="keys"><kbd>P</kbd> · <kbd>M</kbd> · <kbd>Alt</kbd><kbd>R</kbd></span></div>
     <div class="sc"><span>Mostrar esta ayuda</span><span class="keys"><kbd>?</kbd></span></div>
   </div>
 </dialog>
@@ -759,8 +833,8 @@
 <script src="assets/js/generators.js"></script>
 <script src="assets/js/nav.js"></script>
 <script src="assets/js/calculators.js"></script>
-<script src="assets/js/pqr.js"></script>
 <script src="assets/js/templates.js"></script>
+<script src="assets/js/game.js"></script>
 <script src="assets/js/actions.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/fx.js"></script>
