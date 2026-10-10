@@ -93,7 +93,8 @@ document.addEventListener('click', e => {
   else if (a === 'copyhero') { const h = $('.calc-result.visible .calc-stat.hero .calc-stat-value', b.closest('.card')); if (h) copyText(h.textContent.trim(), b, 'Valor copiado'); else toast('Primero llena los campos', 'info'); }
   else if (a === 'clearcard') { clearScope(b.closest('.card')); toast('Tarjeta limpia'); }
   else if (a === 'theme') toggleTheme();
-  else if (a === 'help') openHelp();
+  else if (a === 'help') { closeNav(false); openHelp(); }
+  else if (a === 'menu') openNav();
 });
 
 /* ── Keyboard ── */

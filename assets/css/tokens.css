@@ -1,10 +1,11 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens — color, type, radius, elevation and motion.
-   Light is the default; [data-theme="dark"] overrides colors.
+   Light ("Amanecer") is the base; [data-theme="dark"] ("Noche") overrides colors.
    ═══════════════════════════════════════════════════════════ */
 :root {
   /* Typography */
   --font: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
 
   /* Radius */
   --r-xs: 6px;
@@ -14,36 +15,38 @@
   --r-xl: 18px;
 
   /* Layout */
-  --side: 276px;
+  --hud-h: 72px;
 
   /* Motion */
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --ease-in: cubic-bezier(.55, 0, 1, .45);
+  --ease-io: cubic-bezier(.76, 0, .24, 1);
   --dur-1: .12s;
   --dur-2: .2s;
   --dur-3: .32s;
 
-  /* Light palette */
-  --bg: #F6F6F4;
-  --sidebar: #FBFBFA;
+  /* Light palette — "Amanecer": pastel twilight sky, white glass */
+  --bg: #E9ECFA;
   --surface: #FFFFFF;
-  --surface-2: #FAFAF9;
-  --sunken: #F1F1EF;
-  --hover: rgba(20, 20, 26, .045);
-  --active: rgba(20, 20, 26, .075);
+  --surface-2: #F7F8FD;
+  --sunken: #EEF0F8;
+  --hover: rgba(30, 36, 90, .05);
+  --active: rgba(30, 36, 90, .085);
+  --glass: rgba(255, 255, 255, .8);
+  --glass-line: rgba(255, 255, 255, .9);
 
-  --line: #E9E9E6;
-  --line-2: #DDDDD9;
-  --line-strong: #C8C8C3;
+  --line: #E3E6F2;
+  --line-2: #D6DAEA;
+  --line-strong: #BCC2DA;
 
-  --ink: #1C1C1E;
-  --ink-2: #57575D;
-  --ink-3: #8C8C92;
+  --ink: #141833;
+  --ink-2: #4A5078;
+  --ink-3: #7F85A8;
 
-  --accent: #2F5BEA;
-  --accent-hover: #2349CF;
-  --accent-ink: #2347C4;
-  --accent-soft: rgba(47, 91, 234, .09);
+  --accent: #4157E0;
+  --accent-hover: #3045C9;
+  --accent-ink: #3347C2;
+  --accent-soft: rgba(65, 87, 224, .1);
   --on-accent: #FFFFFF;
 
   --success: #17864F;
@@ -52,64 +55,98 @@
   --danger-hover: #BC2F22;
   --danger-soft: rgba(213, 58, 44, .09);
   --warn: #B4530B;
-  --mark: #F2B33D;
+  --mark: #FFB27A;
 
   /* High-contrast block (results, ticket, toast) */
-  --contrast: #1C1C1E;
-  --contrast-ink: #F5F5F7;
-  --contrast-muted: #A1A1A8;
+  --contrast: #151A3A;
+  --contrast-ink: #F3F4FF;
+  --contrast-muted: #9CA2CC;
   --toast-ok: #3DD68C;
 
-  --focus: 0 0 0 3px rgba(47, 91, 234, .22);
+  /* Sky behind the page (night → dusk → dawn as you scroll) */
+  --sky-base: #C9D2F4;
+  --sky-1: linear-gradient(180deg, #7E97E6 0%, #B3B9EE 45%, #E9C6E2 100%);
+  --sky-2: linear-gradient(180deg, #9C8FE0 0%, #D6B5E6 50%, #F7C7CF 100%);
+  --sky-3: linear-gradient(180deg, #A9B6EC 0%, #F1C6D6 55%, #FFD9B8 100%);
+  --star: 255, 255, 255;
+  --star-alpha: .7;
 
-  --shadow-xs: 0 1px 2px rgba(16, 16, 22, .04);
-  --shadow-sm: 0 1px 2px rgba(16, 16, 22, .04), 0 2px 6px rgba(16, 16, 22, .03);
-  --shadow-md: 0 2px 4px rgba(16, 16, 22, .04), 0 8px 20px rgba(16, 16, 22, .06);
-  --shadow-lg: 0 10px 24px -6px rgba(16, 16, 22, .12), 0 28px 64px -16px rgba(16, 16, 22, .22);
+  /* Floating HUD and menu */
+  --pill: rgba(255, 255, 255, .66);
+  --pill-line: rgba(255, 255, 255, .85);
+  --pill-ink: #141833;
+  --pill-ink-2: #4A5078;
+  --mo-bg: rgba(233, 236, 250, .86);
+  --mo-ink: #141833;
+  --mo-ink-2: #5A6088;
+
+  --focus: 0 0 0 3px rgba(65, 87, 224, .22);
+
+  --shadow-xs: 0 1px 2px rgba(20, 24, 60, .05);
+  --shadow-sm: 0 1px 2px rgba(20, 24, 60, .05), 0 4px 14px rgba(20, 24, 60, .05);
+  --shadow-md: 0 2px 4px rgba(20, 24, 60, .05), 0 12px 32px rgba(20, 24, 60, .1);
+  --shadow-lg: 0 10px 24px -6px rgba(20, 24, 60, .14), 0 28px 64px -16px rgba(20, 24, 60, .28);
 
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --bg: #0E0E10;
-  --sidebar: #131316;
-  --surface: #18181B;
-  --surface-2: #1C1C20;
-  --sunken: #121215;
-  --hover: rgba(255, 255, 255, .05);
-  --active: rgba(255, 255, 255, .085);
+  /* Dark palette — "Noche": deep night sky, comet cyan and pink */
+  --bg: #060918;
+  --surface: #11163A;
+  --surface-2: #151B44;
+  --sunken: #0B1030;
+  --hover: rgba(170, 190, 255, .07);
+  --active: rgba(170, 190, 255, .12);
+  --glass: rgba(12, 16, 44, .72);
+  --glass-line: rgba(170, 190, 255, .14);
 
-  --line: #26262B;
-  --line-2: #303036;
-  --line-strong: #44444C;
+  --line: #222A5A;
+  --line-2: #2C3568;
+  --line-strong: #414C88;
 
-  --ink: #F3F3F5;
-  --ink-2: #ABABB3;
-  --ink-3: #76767F;
+  --ink: #EEF1FF;
+  --ink-2: #AEB5DC;
+  --ink-3: #7C84B2;
 
-  --accent: #7391FF;
-  --accent-hover: #8CA4FF;
-  --accent-ink: #A3B6FF;
-  --accent-soft: rgba(115, 145, 255, .14);
-  --on-accent: #0B0F1F;
+  --accent: #74CCFF;
+  --accent-hover: #96D9FF;
+  --accent-ink: #A5DFFF;
+  --accent-soft: rgba(116, 204, 255, .14);
+  --on-accent: #04122A;
 
   --success: #3CC587;
   --success-soft: rgba(60, 197, 135, .12);
-  --danger: #FF6A5C;
-  --danger-hover: #FF8578;
-  --danger-soft: rgba(255, 106, 92, .12);
+  --danger: #FF6A7E;
+  --danger-hover: #FF8597;
+  --danger-soft: rgba(255, 106, 126, .12);
   --warn: #FFA066;
 
-  --contrast: #F3F3F5;
-  --contrast-ink: #141416;
-  --contrast-muted: #63636B;
+  --contrast: #E8ECFF;
+  --contrast-ink: #0A0E2A;
+  --contrast-muted: #5D6595;
   --toast-ok: #17864F;
 
-  --focus: 0 0 0 3px rgba(115, 145, 255, .3);
+  --sky-base: #050817;
+  --sky-1: radial-gradient(120% 80% at 70% 0%, #1A2A6E 0%, #0B1235 45%, #050817 100%);
+  --sky-2: radial-gradient(120% 90% at 30% 100%, #4A2A78 0%, #1A1A55 40%, #070A20 100%);
+  --sky-3: radial-gradient(130% 90% at 50% 110%, #8A3A6E 0%, #3A2468 35%, #0B0D2C 75%, #050817 100%);
+  --star: 225, 235, 255;
+  --star-alpha: 1;
+
+  --pill: rgba(10, 14, 40, .5);
+  --pill-line: rgba(170, 190, 255, .18);
+  --pill-ink: #EEF1FF;
+  --pill-ink-2: #AEB5DC;
+  --mo-bg: rgba(5, 8, 26, .82);
+  --mo-ink: #EEF1FF;
+  --mo-ink-2: #9AA2CE;
+
+  --focus: 0 0 0 3px rgba(116, 204, 255, .3);
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .18);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 10px 24px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .2);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 14px 36px rgba(0, 0, 0, .35);
   --shadow-lg: 0 12px 28px -6px rgba(0, 0, 0, .5), 0 32px 72px -16px rgba(0, 0, 0, .6);
 
   color-scheme: dark;

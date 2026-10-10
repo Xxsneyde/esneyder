@@ -105,7 +105,7 @@ function setTheme(t) {
   $$('[data-theme-label]').forEach(el => { el.textContent = t === 'light' ? 'Oscuro' : 'Claro'; });
   $$('[data-theme-icon]').forEach(u => u.setAttribute('href', t === 'light' ? '#i-moon' : '#i-sun'));
   const meta = $('meta[name="theme-color"]');
-  if (meta) meta.content = t === 'light' ? '#F6F6F4' : '#0E0E10';
+  if (meta) meta.content = t === 'light' ? '#C9D2F4' : '#060918';
   store.setRaw('mybt-theme', t);
 }
 function toggleTheme() {
