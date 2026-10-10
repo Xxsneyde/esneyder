@@ -3,11 +3,8 @@ html { scrollbar-gutter: stable; }
 body.nav-open { overflow: hidden; }
 
 /* ── Sky + starfield (fixed, behind everything) ── */
-.sky { position: fixed; inset: 0; z-index: -2; background: var(--sky-base); pointer-events: none; }
-.sky-l { position: absolute; inset: 0; }
-.sky-1 { background: var(--sky-1); opacity: clamp(0, calc(1 - var(--sp, 0) * 1.6), 1); }
-.sky-2 { background: var(--sky-2); opacity: clamp(0, calc(1 - (var(--sp, 0) - .5) * (var(--sp, 0) - .5) * 9), 1); }
-.sky-3 { background: var(--sky-3); opacity: clamp(0, calc((var(--sp, 0) - .55) * 2.4), 1); }
+/* One static layer: cross-fading several full-screen gradients while scrolling cost ~20% of the frame rate. */
+.sky { position: fixed; inset: 0; z-index: -2; background: var(--sky-1), var(--sky-base); pointer-events: none; }
 .space { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
 
 /* ── Floating HUD: brand chip + menu pill. Tucks away while scrolling down. ── */
@@ -22,15 +19,13 @@ body.nav-open { overflow: hidden; }
 .hud.tucked { transform: translateY(-150%); opacity: 0; }
 body.nav-open .hud { transform: none; opacity: 1; }
 
-.hud-brand, .hud-menu {
+.hud-brand, .hud-menu, .hud-gear {
   display: inline-flex; align-items: center;
   height: 44px;
   color: var(--pill-ink);
   background: var(--pill);
   border: 1px solid var(--pill-line);
   border-radius: 999px;
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  backdrop-filter: blur(16px) saturate(160%);
   box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .35);
   transition: background var(--dur-2), border-color var(--dur-2), transform var(--dur-2) var(--ease-out);
 }
@@ -40,12 +35,17 @@ body.nav-open .hud { transform: none; opacity: 1; }
   width: 32px; height: 32px; flex-shrink: 0;
   display: grid; place-items: center;
   border-radius: 50%;
-  color: #0A0E2A;
-  background: conic-gradient(from 210deg, #8FE3FF, #A99BFF, #FF8DC0, #FFC59A, #8FE3FF);
-  box-shadow: 0 0 18px rgba(143, 227, 255, .45);
+  color: var(--logo-ink);
+  background: var(--logo-bg);
+  transition: transform .5s var(--ease-out), background var(--dur-3), color var(--dur-3);
 }
+.hud-brand:hover .brand-mark { transform: rotate(-90deg); }
 .brand-mark .ico { width: 18px; height: 18px; stroke-width: 2.4; }
 
+.hud-right { display: flex; align-items: center; gap: 8px; }
+.hud-gear { justify-content: center; width: 44px; padding: 0; }
+.hud-gear .ico { width: 19px; height: 19px; transition: transform .6s var(--ease-out); }
+.hud-gear:hover .ico { transform: rotate(90deg); }
 .hud-menu { position: relative; gap: 12px; padding: 0 6px 0 18px; overflow: hidden; }
 .hud-menu:hover { border-color: color-mix(in srgb, var(--pill-ink) 30%, transparent); }
 .hud-now {
@@ -72,7 +72,7 @@ body.nav-open .hud-burger i:last-child { transform: translateY(-2.8px) rotate(-4
 .hud-progress {
   position: absolute; left: 18px; right: 44px; bottom: 4px;
   height: 2px; border-radius: 2px;
-  background: linear-gradient(90deg, #8FE3FF, #A99BFF, #FF8DC0);
+  background: var(--accent);
   transform-origin: left;
   transform: scaleX(var(--sp, 0));
   opacity: .9;
@@ -84,8 +84,6 @@ body.nav-open .hud-burger i:last-child { transform: translateY(-2.8px) rotate(-4
   overflow-y: auto; overscroll-behavior: contain;
   color: var(--mo-ink);
   background: var(--mo-bg);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  backdrop-filter: blur(24px) saturate(150%);
   visibility: hidden;
   clip-path: circle(0 at var(--ox, calc(100% - 50px)) var(--oy, 36px));
   transition: clip-path .65s var(--ease-io), visibility 0s .65s;
@@ -254,3 +252,16 @@ body.nav-open .nav-group {
   .hud-brand-name { display: none; }
   .hud-brand { padding: 0 6px; }
 }
+
+/* ── Click ripple (fx.js adds a <span class="ripple"> where you press) ── */
+.has-ripple { position: relative; overflow: hidden; isolation: isolate; }
+.ripple {
+  position: absolute; z-index: -1;
+  width: 8px; height: 8px; margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .22;
+  pointer-events: none;
+  animation: ripple .6s var(--ease-out) forwards;
+}
+@keyframes ripple { to { transform: scale(var(--rs, 40)); opacity: 0; } }

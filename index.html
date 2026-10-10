@@ -3,15 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#060918">
+<meta name="theme-color" content="#000000">
 <title>MYBT · Herramientas BodyTech</title>
 <script>
-  /* Apply the saved theme before first paint to avoid a flash. */
+  /* Apply the saved palette and effects level before first paint to avoid a flash. */
   (function () {
-    var t;
-    try { t = localStorage.getItem('mybt-theme'); } catch (e) {}
-    if (t !== 'light' && t !== 'dark') t = 'dark'; // the cinematic night look is the default
-    document.documentElement.setAttribute('data-theme', t);
+    var p, f, t, d = document.documentElement;
+    try { p = localStorage.getItem('mybt-palette'); f = localStorage.getItem('mybt-fx'); t = localStorage.getItem('mybt-theme'); } catch (e) {}
+    if (!/^(negro|blanco|azul|violeta|esmeralda|atardecer|rosa)$/.test(p || '')) p = t === 'light' ? 'blanco' : 'negro';
+    d.setAttribute('data-palette', p);
+    d.setAttribute('data-theme', p === 'blanco' ? 'light' : 'dark');
+    if (f === 'off' || (!f && matchMedia('(prefers-reduced-motion: reduce)').matches)) d.className += ' fx-still';
+    else if (f === 'lite') d.className += ' fx-lite';
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,11 +68,12 @@
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="m7 4 13 8-13 8Z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
 </svg>
 
 <!-- ═══════════ Sky + 3D starfield (drawn by fx.js) ═══════════ -->
-<div class="sky" aria-hidden="true"><div class="sky-l sky-1"></div><div class="sky-l sky-2"></div><div class="sky-l sky-3"></div></div>
+<div class="sky" aria-hidden="true"></div>
 <canvas class="space" id="space" aria-hidden="true"></canvas>
 
 <!-- ═══════════ Floating HUD: it tucks away while you scroll down ═══════════ -->
@@ -78,12 +82,15 @@
     <span class="brand-mark" aria-hidden="true"><svg class="ico"><use href="#i-logo"/></svg></span>
     <span class="hud-brand-name">MYBT</span>
   </a>
+  <div class="hud-right">
+  <button class="hud-gear" data-act="settings" aria-label="Ajustes" title="Ajustes (Alt + S)"><svg class="ico"><use href="#i-settings"/></svg></button>
   <button class="hud-menu" id="menuBtn" aria-label="Abrir menú" aria-controls="sidebar" aria-expanded="false" title="Menú (/ o Ctrl K para buscar)">
     <span class="hud-now" id="topbarTitle"></span>
     <span class="hud-label" aria-hidden="true"><span class="is-open">Menú</span><span class="is-close">Cerrar</span></span>
     <span class="hud-burger" aria-hidden="true"><i></i><i></i></span>
     <span class="hud-progress" aria-hidden="true"></span>
   </button>
+  </div>
 </header>
 
 <!-- ═══════════ Collapsible menu: jump straight to any tool ═══════════ -->
@@ -138,6 +145,7 @@
 
     <div class="mo-foot">
       <button class="side-btn" data-go="top"><svg class="ico"><use href="#i-arrow-up"/></svg>Inicio</button>
+      <button class="side-btn" data-act="settings" title="Ajustes (Alt + S)"><svg class="ico"><use href="#i-settings"/></svg>Ajustes</button>
       <button class="side-btn" data-act="help" title="Atajos de teclado (?)"><svg class="ico"><use href="#i-keyboard"/></svg>Atajos</button>
       <button class="side-btn" data-act="theme" title="Cambiar tema (Alt + T)"><svg class="ico"><use data-theme-icon href="#i-moon"/></svg><span data-theme-label>Oscuro</span></button>
       <span class="mo-hint"><kbd>Esc</kbd> para cerrar · <kbd>Enter</kbd> abre la primera coincidencia</span>
@@ -337,7 +345,7 @@
         </div>
       </div>
       <div class="ch-visual" data-scene-item>
-        <div class="orb-scene" data-tilt="screen" style="--h0: 195" aria-hidden="true"><span class="ring"></span><div class="orb"></div><span class="ring r2"></span><span class="orb-floor"></span></div>
+        <div class="orb-scene" data-tilt="screen" aria-hidden="true"><span class="ring"></span><div class="orb"></div><span class="ring r2"></span><span class="orb-floor"></span></div>
       </div>
     </div>
   </section>
@@ -628,7 +636,7 @@
   <!-- ═══════════ Finale ═══════════ -->
   <section class="finale cine" id="final" data-scene aria-labelledby="finalTitle">
     <div class="ch-bg" aria-hidden="true" style="background-image: url(assets/img/cometa-bruma.webp)"></div>
-    <div class="orb-scene" data-tilt="screen" style="--h0: 290" aria-hidden="true"><span class="ring"></span><div class="orb"></div><span class="ring r2"></span><span class="orb-floor"></span></div>
+    <div class="orb-scene" data-tilt="screen" style="--h0: 70" aria-hidden="true"><span class="ring"></span><div class="orb"></div><span class="ring r2"></span><span class="orb-floor"></span></div>
     <h2 class="display rv" id="finalTitle">Fin del <em>recorrido.</em></h2>
     <p class="rv">Todo listo. Vuelve al inicio o abre el menú para saltar a cualquier herramienta.</p>
     <div class="finale-cta rv">
@@ -656,6 +664,29 @@
   </div>
 </dialog>
 
+<dialog id="settings" aria-labelledby="set-title">
+  <div class="dlg-head"><h2 id="set-title">Ajustes</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
+  <div class="dlg-body">
+    <h3 id="set-pal">Paleta de colores</h3>
+    <div class="pal-grid" role="radiogroup" aria-labelledby="set-pal">
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="negro" style="--sw-bg: #000000; --sw-sf: #151517; --sw-ac: #F4F4F6"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Negro</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="blanco" style="--sw-bg: #F6F6F7; --sw-sf: #FFFFFF; --sw-ac: #111114"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Blanco</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="azul" style="--sw-bg: #050817; --sw-sf: #11163A; --sw-ac: #74CCFF"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Azul noche</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="violeta" style="--sw-bg: #0B0716; --sw-sf: #1A1230; --sw-ac: #B9A2FF"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Violeta</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="esmeralda" style="--sw-bg: #04100C; --sw-sf: #0B2019; --sw-ac: #52E3AE"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Esmeralda</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="atardecer" style="--sw-bg: #100705; --sw-sf: #24130D; --sw-ac: #FFA86E"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Atardecer</span></button>
+      <button class="pal" role="radio" aria-checked="false" data-palette-pick="rosa" style="--sw-bg: #10050B; --sw-sf: #261020; --sw-ac: #FF8DC4"><span class="pal-sw" aria-hidden="true"><i></i><i></i><i></i></span><span class="pal-name">Rosa</span></button>
+    </div>
+    <h3 id="set-fx">Efectos visuales</h3>
+    <div class="segmented fx-seg" role="radiogroup" aria-labelledby="set-fx">
+      <button class="seg" role="radio" aria-checked="false" data-fx-pick="full">Completos</button>
+      <button class="seg" role="radio" aria-checked="false" data-fx-pick="lite">Ligeros</button>
+      <button class="seg" role="radio" aria-checked="false" data-fx-pick="off">Sin animación</button>
+    </div>
+    <p class="set-hint" id="fxHint"></p>
+  </div>
+</dialog>
+
 <dialog id="help" aria-labelledby="help-title">
   <div class="dlg-head"><h2 id="help-title">Atajos de teclado</h2><button class="icon-btn" data-close aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></div>
   <div class="dlg-body">
@@ -675,7 +706,8 @@
     <div class="sc"><span>Añadir fila · Nueva plantilla</span><span class="keys"><kbd>Alt</kbd><kbd>N</kbd></span></div>
     <div class="sc"><span>Eliminar la fila actual</span><span class="keys"><kbd>Alt</kbd><kbd>Supr</kbd></span></div>
     <div class="sc"><span>Guardar plantilla en el editor</span><span class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></span></div>
-    <div class="sc"><span>Cambiar tema claro u oscuro</span><span class="keys"><kbd>Alt</kbd><kbd>T</kbd></span></div>
+    <div class="sc"><span>Cambiar entre paleta clara y oscura</span><span class="keys"><kbd>Alt</kbd><kbd>T</kbd></span></div>
+    <div class="sc"><span>Abrir ajustes (paletas y efectos)</span><span class="keys"><kbd>Alt</kbd><kbd>S</kbd></span></div>
     <div class="sc"><span>Mostrar esta ayuda</span><span class="keys"><kbd>?</kbd></span></div>
   </div>
 </dialog>
@@ -732,5 +764,6 @@
 <script src="assets/js/actions.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/fx.js"></script>
+<script src="assets/js/settings.js"></script>
 </body>
 </html>

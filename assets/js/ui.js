@@ -99,19 +99,39 @@ function confirmDialog({ title, message = '', confirmLabel = 'Confirmar', cancel
 }
 $('#confirmOk').addEventListener('click', () => closeDialog($('#confirmDlg'), 'ok'));
 
-/* ── Theme ── */
-function setTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  $$('[data-theme-label]').forEach(el => { el.textContent = t === 'light' ? 'Oscuro' : 'Claro'; });
-  $$('[data-theme-icon]').forEach(u => u.setAttribute('href', t === 'light' ? '#i-moon' : '#i-sun'));
-  const meta = $('meta[name="theme-color"]');
-  if (meta) meta.content = t === 'light' ? '#C9D2F4' : '#060918';
-  store.setRaw('mybt-theme', t);
+/* ── Palettes (Ajustes → Paleta de colores). Each palette has a light or dark scheme. ── */
+const PALETTES = {
+  negro:     { name: 'Negro',      scheme: 'dark',  meta: '#000000' },
+  blanco:    { name: 'Blanco',     scheme: 'light', meta: '#F6F6F7' },
+  azul:      { name: 'Azul noche', scheme: 'dark',  meta: '#050817' },
+  violeta:   { name: 'Violeta',    scheme: 'dark',  meta: '#0B0716' },
+  esmeralda: { name: 'Esmeralda',  scheme: 'dark',  meta: '#04100C' },
+  atardecer: { name: 'Atardecer',  scheme: 'dark',  meta: '#100705' },
+  rosa:      { name: 'Rosa',       scheme: 'dark',  meta: '#10050B' }
+};
+const curPalette = () => { const p = document.documentElement.getAttribute('data-palette'); return PALETTES[p] ? p : 'negro'; };
+
+function setPalette(p, announce) {
+  if (!PALETTES[p]) p = 'negro';
+  const { scheme, meta, name } = PALETTES[p], root = document.documentElement;
+  root.setAttribute('data-palette', p);
+  root.setAttribute('data-theme', scheme);
+  if (scheme === 'dark') store.setRaw('mybt-dark', p);
+  store.setRaw('mybt-palette', p);
+  store.setRaw('mybt-theme', scheme);
+  $$('[data-theme-label]').forEach(el => { el.textContent = scheme === 'light' ? 'Oscuro' : 'Claro'; });
+  $$('[data-theme-icon]').forEach(u => u.setAttribute('href', scheme === 'light' ? '#i-moon' : '#i-sun'));
+  $$('[data-palette-pick]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.palettePick === p)));
+  const m = $('meta[name="theme-color"]');
+  if (m) m.content = meta;
+  document.dispatchEvent(new CustomEvent('palettechange', { detail: p }));
+  if (announce) toast(`Paleta ${name}`, 'info');
 }
+/** Light/dark shortcut (Alt+T): Blanco ⇄ the last dark palette you used. */
+function setTheme(t) { setPalette(t === 'light' ? 'blanco' : (PALETTES[store.getRaw('mybt-dark')] ? store.getRaw('mybt-dark') : 'negro')); }
 function toggleTheme() {
-  const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-  setTheme(next);
-  toast(next === 'light' ? 'Tema claro' : 'Tema oscuro', 'info');
+  const dark = store.getRaw('mybt-dark');
+  setPalette(PALETTES[curPalette()].scheme === 'light' ? (PALETTES[dark] ? dark : 'negro') : 'blanco', true);
 }
 
 /* ── Dropdown menus ── */

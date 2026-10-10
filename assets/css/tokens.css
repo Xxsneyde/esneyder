@@ -1,6 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens — color, type, radius, elevation and motion.
-   Light ("Amanecer") is the base; [data-theme="dark"] ("Noche") overrides colors.
+   Palettes (Ajustes → Paleta de colores):
+     data-palette="blanco"  light scheme, the base below
+     data-palette="negro"   dark scheme, pure black (default)
+     data-palette="azul|violeta|esmeralda|atardecer|rosa"  dark scheme tinted by --ph
+   data-theme ("light" | "dark") always follows the palette's scheme.
    ═══════════════════════════════════════════════════════════ */
 :root {
   /* Typography */
@@ -25,28 +29,28 @@
   --dur-2: .2s;
   --dur-3: .32s;
 
-  /* Light palette — "Amanecer": pastel twilight sky, white glass */
-  --bg: #E9ECFA;
+  /* ── Blanco: clean white, black accents ── */
+  --bg: #F6F6F7;
   --surface: #FFFFFF;
-  --surface-2: #F7F8FD;
-  --sunken: #EEF0F8;
-  --hover: rgba(30, 36, 90, .05);
-  --active: rgba(30, 36, 90, .085);
-  --glass: rgba(255, 255, 255, .8);
-  --glass-line: rgba(255, 255, 255, .9);
+  --surface-2: #F8F8F9;
+  --sunken: #F0F0F2;
+  --hover: rgba(10, 10, 14, .045);
+  --active: rgba(10, 10, 14, .08);
+  --glass: rgba(255, 255, 255, .94);
+  --glass-line: #E6E6EA;
 
-  --line: #E3E6F2;
-  --line-2: #D6DAEA;
-  --line-strong: #BCC2DA;
+  --line: #E6E6EA;
+  --line-2: #D9D9DE;
+  --line-strong: #BDBDC4;
 
-  --ink: #141833;
-  --ink-2: #4A5078;
-  --ink-3: #7F85A8;
+  --ink: #0B0B0D;
+  --ink-2: #505058;
+  --ink-3: #85858D;
 
-  --accent: #4157E0;
-  --accent-hover: #3045C9;
-  --accent-ink: #3347C2;
-  --accent-soft: rgba(65, 87, 224, .1);
+  --accent: #111114;
+  --accent-hover: #2A2A30;
+  --accent-ink: #1A1A1F;
+  --accent-soft: rgba(10, 10, 14, .07);
   --on-accent: #FFFFFF;
 
   --success: #17864F;
@@ -55,99 +59,163 @@
   --danger-hover: #BC2F22;
   --danger-soft: rgba(213, 58, 44, .09);
   --warn: #B4530B;
-  --mark: #FFB27A;
+  --mark: #FFC94D;
 
   /* High-contrast block (results, ticket, toast) */
-  --contrast: #151A3A;
-  --contrast-ink: #F3F4FF;
-  --contrast-muted: #9CA2CC;
+  --contrast: #0B0B0D;
+  --contrast-ink: #F5F5F7;
+  --contrast-muted: #9A9AA2;
   --toast-ok: #3DD68C;
 
-  /* Sky behind the page (night → dusk → dawn as you scroll) */
-  --sky-base: #C9D2F4;
-  --sky-1: linear-gradient(180deg, #7E97E6 0%, #B3B9EE 45%, #E9C6E2 100%);
-  --sky-2: linear-gradient(180deg, #9C8FE0 0%, #D6B5E6 50%, #F7C7CF 100%);
-  --sky-3: linear-gradient(180deg, #A9B6EC 0%, #F1C6D6 55%, #FFD9B8 100%);
-  --star: 255, 255, 255;
-  --star-alpha: .7;
+  /* Sky behind the page (--sky-2 / --sky-3 kept for palettes that may use them) */
+  --sky-base: #F6F6F7;
+  --sky-1: radial-gradient(120% 80% at 70% 0%, #FFFFFF, #F1F1F4 60%, #F6F6F7);
+  --sky-2: radial-gradient(120% 90% at 30% 100%, #ECECF1, #F6F6F7 60%);
+  --sky-3: radial-gradient(130% 90% at 50% 110%, #E7E7EC, #F6F6F7 70%);
+  --star: 20, 20, 28;
+  --star-alpha: .28;
+  --comet-1: 70, 70, 84;
+  --comet-2: 150, 150, 165;
 
-  /* Floating HUD and menu */
-  --pill: rgba(255, 255, 255, .66);
-  --pill-line: rgba(255, 255, 255, .85);
-  --pill-ink: #141833;
-  --pill-ink-2: #4A5078;
-  --mo-bg: rgba(233, 236, 250, .86);
-  --mo-ink: #141833;
-  --mo-ink-2: #5A6088;
+  /* Cinematic blocks (hero, chapters) stay dark in every palette */
+  --cine-shade: 10, 10, 13;
+  --cine-card: #111114;
+  --grad: linear-gradient(100deg, #FFFFFF 0%, #D7D7DE 50%, #A2A2AC 100%);
+  --orb-h: 220;
+  --orb-s: 8%;
 
-  --focus: 0 0 0 3px rgba(65, 87, 224, .22);
+  /* Floating HUD, logo and menu */
+  --pill: rgba(255, 255, 255, .92);
+  --pill-line: rgba(10, 10, 14, .1);
+  --pill-ink: #0B0B0D;
+  --pill-ink-2: #505058;
+  --logo-bg: #0B0B0D;
+  --logo-ink: #FFFFFF;
+  --mo-bg: rgba(246, 246, 247, .985);
+  --mo-ink: #0B0B0D;
+  --mo-ink-2: #5E5E66;
 
-  --shadow-xs: 0 1px 2px rgba(20, 24, 60, .05);
-  --shadow-sm: 0 1px 2px rgba(20, 24, 60, .05), 0 4px 14px rgba(20, 24, 60, .05);
-  --shadow-md: 0 2px 4px rgba(20, 24, 60, .05), 0 12px 32px rgba(20, 24, 60, .1);
-  --shadow-lg: 0 10px 24px -6px rgba(20, 24, 60, .14), 0 28px 64px -16px rgba(20, 24, 60, .28);
+  --focus: 0 0 0 3px rgba(10, 10, 14, .18);
+
+  --shadow-xs: 0 1px 2px rgba(10, 10, 14, .05);
+  --shadow-sm: 0 1px 2px rgba(10, 10, 14, .05), 0 4px 14px rgba(10, 10, 14, .05);
+  --shadow-md: 0 2px 4px rgba(10, 10, 14, .05), 0 12px 32px rgba(10, 10, 14, .1);
+  --shadow-lg: 0 10px 24px -6px rgba(10, 10, 14, .14), 0 28px 64px -16px rgba(10, 10, 14, .28);
 
   color-scheme: light;
 }
 
+/* ── Negro: pure black, white accents (default) ── */
 :root[data-theme="dark"] {
-  /* Dark palette — "Noche": deep night sky, comet cyan and pink */
-  --bg: #060918;
-  --surface: #11163A;
-  --surface-2: #151B44;
-  --sunken: #0B1030;
-  --hover: rgba(170, 190, 255, .07);
-  --active: rgba(170, 190, 255, .12);
-  --glass: rgba(12, 16, 44, .72);
-  --glass-line: rgba(170, 190, 255, .14);
+  --bg: #000000;
+  --surface: #0F0F11;
+  --surface-2: #151517;
+  --sunken: #09090A;
+  --hover: rgba(255, 255, 255, .06);
+  --active: rgba(255, 255, 255, .1);
+  --glass: rgba(14, 14, 16, .92);
+  --glass-line: #222226;
 
-  --line: #222A5A;
-  --line-2: #2C3568;
-  --line-strong: #414C88;
+  --line: #1F1F23;
+  --line-2: #2A2A2F;
+  --line-strong: #3F3F46;
 
-  --ink: #EEF1FF;
-  --ink-2: #AEB5DC;
-  --ink-3: #7C84B2;
+  --ink: #F4F4F6;
+  --ink-2: #A9A9B1;
+  --ink-3: #74747D;
 
-  --accent: #74CCFF;
-  --accent-hover: #96D9FF;
-  --accent-ink: #A5DFFF;
-  --accent-soft: rgba(116, 204, 255, .14);
-  --on-accent: #04122A;
+  --accent: #F4F4F6;
+  --accent-hover: #FFFFFF;
+  --accent-ink: #D9D9DF;
+  --accent-soft: rgba(255, 255, 255, .1);
+  --on-accent: #000000;
 
   --success: #3CC587;
   --success-soft: rgba(60, 197, 135, .12);
-  --danger: #FF6A7E;
-  --danger-hover: #FF8597;
-  --danger-soft: rgba(255, 106, 126, .12);
+  --danger: #FF6A6A;
+  --danger-hover: #FF8585;
+  --danger-soft: rgba(255, 106, 106, .12);
   --warn: #FFA066;
+  --mark: #FFC94D;
 
-  --contrast: #E8ECFF;
-  --contrast-ink: #0A0E2A;
-  --contrast-muted: #5D6595;
+  --contrast: #F4F4F6;
+  --contrast-ink: #0A0A0B;
+  --contrast-muted: #66666E;
   --toast-ok: #17864F;
 
-  --sky-base: #050817;
-  --sky-1: radial-gradient(120% 80% at 70% 0%, #1A2A6E 0%, #0B1235 45%, #050817 100%);
-  --sky-2: radial-gradient(120% 90% at 30% 100%, #4A2A78 0%, #1A1A55 40%, #070A20 100%);
-  --sky-3: radial-gradient(130% 90% at 50% 110%, #8A3A6E 0%, #3A2468 35%, #0B0D2C 75%, #050817 100%);
-  --star: 225, 235, 255;
+  --sky-base: #000000;
+  --sky-1: radial-gradient(120% 80% at 70% 0%, #17171C 0%, #050506 55%, #000 100%);
+  --sky-2: radial-gradient(120% 90% at 30% 100%, #131317 0%, #040405 55%, #000 100%);
+  --sky-3: radial-gradient(130% 90% at 50% 110%, #1A1A1F 0%, #060607 50%, #000 100%);
+  --star: 235, 235, 245;
   --star-alpha: 1;
+  --comet-1: 230, 236, 255;
+  --comet-2: 170, 170, 190;
 
-  --pill: rgba(10, 14, 40, .5);
-  --pill-line: rgba(170, 190, 255, .18);
-  --pill-ink: #EEF1FF;
-  --pill-ink-2: #AEB5DC;
-  --mo-bg: rgba(5, 8, 26, .82);
-  --mo-ink: #EEF1FF;
-  --mo-ink-2: #9AA2CE;
+  --cine-shade: 0, 0, 0;
+  --cine-card: #0E0E10;
 
-  --focus: 0 0 0 3px rgba(116, 204, 255, .3);
+  --pill: rgba(16, 16, 18, .9);
+  --pill-line: rgba(255, 255, 255, .12);
+  --pill-ink: #F4F4F6;
+  --pill-ink-2: #A9A9B1;
+  --logo-bg: #FFFFFF;
+  --logo-ink: #000000;
+  --mo-bg: rgba(0, 0, 0, .975);
+  --mo-ink: #F4F4F6;
+  --mo-ink-2: #9A9AA2;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 14px rgba(0, 0, 0, .2);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 14px 36px rgba(0, 0, 0, .35);
-  --shadow-lg: 0 12px 28px -6px rgba(0, 0, 0, .5), 0 32px 72px -16px rgba(0, 0, 0, .6);
+  --focus: 0 0 0 3px rgba(255, 255, 255, .25);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, .4), 0 14px 36px rgba(0, 0, 0, .45);
+  --shadow-lg: 0 12px 28px -6px rgba(0, 0, 0, .6), 0 32px 72px -16px rgba(0, 0, 0, .7);
 
   color-scheme: dark;
+}
+
+/* ── Tinted dark palettes: every surface derives from the hue --ph ── */
+:root[data-palette="azul"]      { --ph: 228; --accent: #74CCFF; --accent-hover: #96D9FF; --accent-ink: #A5DFFF; --orb-h: 195; --c2: 255, 141, 192; --grad: linear-gradient(100deg, #8FE3FF 0%, #A99BFF 45%, #FF8DC0 80%, #FFC59A 100%); }
+:root[data-palette="violeta"]   { --ph: 262; --accent: #B9A2FF; --accent-hover: #CDBBFF; --accent-ink: #D2C3FF; --orb-h: 262; --c2: 255, 141, 220; --grad: linear-gradient(100deg, #D9CCFF 0%, #B9A2FF 45%, #FF9BE0 100%); }
+:root[data-palette="esmeralda"] { --ph: 162; --accent: #52E3AE; --accent-hover: #7AEDC2; --accent-ink: #8DF0CB; --orb-h: 160; --c2: 140, 230, 255; --grad: linear-gradient(100deg, #B7FFE4 0%, #52E3AE 50%, #7FD8FF 100%); }
+:root[data-palette="atardecer"] { --ph: 18;  --accent: #FFA86E; --accent-hover: #FFBC8F; --accent-ink: #FFC6A0; --orb-h: 24;  --c2: 255, 120, 150; --grad: linear-gradient(100deg, #FFE0B8 0%, #FFA86E 50%, #FF7896 100%); }
+:root[data-palette="rosa"]      { --ph: 330; --accent: #FF8DC4; --accent-hover: #FFA8D3; --accent-ink: #FFB6DA; --orb-h: 325; --c2: 190, 160, 255; --grad: linear-gradient(100deg, #FFD3EA 0%, #FF8DC4 50%, #B9A2FF 100%); }
+
+:root[data-palette="azul"], :root[data-palette="violeta"], :root[data-palette="esmeralda"],
+:root[data-palette="atardecer"], :root[data-palette="rosa"] {
+  --bg: hsl(var(--ph) 55% 4%);
+  --surface: hsl(var(--ph) 38% 9%);
+  --surface-2: hsl(var(--ph) 34% 12%);
+  --sunken: hsl(var(--ph) 45% 6%);
+  --hover: hsl(var(--ph) 80% 85% / .07);
+  --active: hsl(var(--ph) 80% 85% / .12);
+  --glass: hsl(var(--ph) 40% 8% / .92);
+  --glass-line: hsl(var(--ph) 40% 22%);
+  --line: hsl(var(--ph) 36% 16%);
+  --line-2: hsl(var(--ph) 34% 21%);
+  --line-strong: hsl(var(--ph) 30% 32%);
+  --ink: hsl(var(--ph) 60% 96%);
+  --ink-2: hsl(var(--ph) 22% 74%);
+  --ink-3: hsl(var(--ph) 14% 54%);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+  --on-accent: hsl(var(--ph) 60% 8%);
+  --contrast: hsl(var(--ph) 70% 95%);
+  --contrast-ink: hsl(var(--ph) 55% 7%);
+  --contrast-muted: hsl(var(--ph) 18% 44%);
+  --sky-base: var(--bg);
+  --sky-1: radial-gradient(120% 80% at 70% 0%, hsl(var(--ph) 60% 16%) 0%, hsl(var(--ph) 55% 6%) 50%, var(--bg) 100%);
+  --sky-2: radial-gradient(120% 90% at 30% 100%, hsl(calc(var(--ph) + 30) 50% 18%) 0%, hsl(var(--ph) 50% 7%) 45%, var(--bg) 100%);
+  --sky-3: radial-gradient(130% 90% at 50% 110%, hsl(calc(var(--ph) - 40) 50% 22%) 0%, hsl(var(--ph) 45% 9%) 40%, var(--bg) 100%);
+  --star: 230, 236, 255;
+  --comet-1: 200, 235, 255;
+  --comet-2: var(--c2);
+  --cine-shade: 2, 3, 10;
+  --cine-card: hsl(var(--ph) 45% 9%);
+  --orb-s: 95%;
+  --pill: hsl(var(--ph) 45% 8% / .9);
+  --pill-line: hsl(var(--ph) 60% 80% / .16);
+  --mo-bg: hsl(var(--ph) 55% 4% / .975);
+  --mo-ink-2: hsl(var(--ph) 20% 70%);
+  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 32%, transparent);
 }

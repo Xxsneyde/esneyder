@@ -1,7 +1,7 @@
 'use strict';
 /* ═══════════ Boot ═══════════ */
 (function init() {
-  setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+  setPalette(curPalette());
 
   Object.keys(GENERATORS).forEach(generate);
   fillPlan(); calcPlan();

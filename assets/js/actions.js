@@ -95,6 +95,7 @@ document.addEventListener('click', e => {
   else if (a === 'theme') toggleTheme();
   else if (a === 'help') { closeNav(false); openHelp(); }
   else if (a === 'menu') openNav();
+  else if (a === 'settings') openSettings();
 });
 
 /* ── Keyboard ── */
@@ -145,6 +146,7 @@ function altShortcuts(e, el) {
   if (c === 'KeyC') { e.preventDefault(); copyCurrent(); return; }
   if (c === 'KeyR') { e.preventDefault(); resetCurrent(); return; }
   if (c === 'KeyT') { e.preventDefault(); toggleTheme(); return; }
+  if (c === 'KeyS') { e.preventDefault(); openSettings(); return; }
   if (c === 'KeyN') {
     e.preventDefault();
     if (sec === 'plantillas') Tpl.openEditor();

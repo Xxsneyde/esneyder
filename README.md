@@ -4,19 +4,23 @@ Aplicación web (HTML, CSS y JavaScript, sin dependencias) con las herramientas 
 
 El diseño es una sola página con scroll continuo, estilo «scrollytelling»: una portada 3D fijada al scroll, un índice de capítulos y cinco capítulos (uno por grupo de herramientas) con escenas 3D, imágenes con parallax y un cielo estrellado animado que avanza al hacer scroll. El menú no ocupa espacio fijo: es un botón flotante **Menú** que se esconde al bajar y vuelve al subir (o al acercar el puntero arriba); al abrirlo cubre la pantalla y lleva directo a cualquier herramienta. Con «reducir movimiento» activado en el sistema, las animaciones se desactivan.
 
+**Ajustes** (botón ⚙ arriba, en el menú o `Alt S`):
+- **Paleta de colores:** Negro (predeterminada), Blanco, Azul noche, Violeta, Esmeralda, Atardecer y Rosa. `Alt T` cambia entre Blanco y la última paleta oscura.
+- **Efectos visuales:** Completos, Ligeros (menos estrellas, 30 fps, sin cometas ni inclinación; para equipos lentos) o Sin animación.
+
 ## Uso
 
 - **Desarrollo:** abre `index.html` directamente en el navegador (funciona también con `file://`).
 - **Archivo único para compartir:** `node scripts/build.mjs` genera `dist/mybt.html`, con todo el CSS y JS incluidos.
 
-Los datos (calculadoras, tabla de valores, plantillas, tema y última herramienta usada) se guardan en `localStorage` del navegador. En **Plantillas → ⋯** puedes exportar o importar una copia de seguridad en JSON.
+Los datos (calculadoras, tabla de valores, plantillas, paleta, nivel de efectos y última herramienta usada) se guardan en `localStorage` del navegador. En **Plantillas → ⋯** puedes exportar o importar una copia de seguridad en JSON.
 
 ## Estructura
 
 ```
 index.html              Marcado de todas las secciones, diálogos e iconos (sprite SVG)
 assets/css/
-  tokens.css            Colores, tipografía, radios, sombras y movimiento (claro / oscuro)
+  tokens.css            Colores de cada paleta, tipografía, radios, sombras y movimiento
   base.css              Reset y elementos base
   layout.css            Cielo, botón flotante (HUD), menú desplegable a pantalla completa y flujo de la página
   scenes.css            Portada 3D, índice, capítulos, orbe y cubo 3D, final, cristal y aparición al hacer scroll
@@ -25,7 +29,7 @@ assets/css/
   templates.css         Sección Plantillas
 assets/js/              (scripts clásicos, cargados en este orden)
   utils.js              DOM, fechas UTC, formato, búsqueda sin tildes, almacenamiento
-  ui.js                 Toast, portapapeles, diálogos animados, confirmación, tema, menús
+  ui.js                 Toast, portapapeles, diálogos animados, confirmación, paletas, menús
   generators.js         Textos de novedades y cálculos simples (saldo, 3.ª congelación)
   nav.js                Scroll a cada herramienta, herramienta actual según el scroll, menú desplegable y su buscador
   calculators.js        Fecha final, días entre fechas, prorrateos, tabla de valores, selector de plan
@@ -33,7 +37,8 @@ assets/js/              (scripts clásicos, cargados en este orden)
   templates.js          Plantillas: crear, editar, eliminar, buscar, filtrar, ordenar, importar/exportar
   actions.js            Acciones comunes (copiar, limpiar, añadir) y atajos de teclado
   main.js               Arranque
-  fx.js                 Escena: estrellas 3D y cometas (canvas), 3D según el scroll, inclinación con el puntero
+  fx.js                 Escena: estrellas 3D y cometas (canvas), 3D según el scroll, inclinación, ondas al pulsar, niveles de efectos
+  settings.js           Diálogo de Ajustes: paleta de colores y efectos visuales
 assets/img/             Imágenes de la portada y los capítulos (WebP) y sus versiones difuminadas de fondo
 scripts/build.mjs       Empaquetado en un solo archivo (CSS, JS e imágenes incluidos)
 ```
